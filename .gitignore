@@ -1,0 +1,11 @@
+### Java template
+# Compiled class file
+*.class
+
+# picture
+*.jpg
+
+# out and target
+/target
+/out
+
