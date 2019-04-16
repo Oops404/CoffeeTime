@@ -50,14 +50,11 @@ public class Fishing extends JFrame {
     private MouseCorrectRobot robot;
 
     public Fishing() throws HeadlessException {
-        int windowWidth = this.getWidth();
-        int windowHeight = this.getHeight();
-        Toolkit kit = Toolkit.getDefaultToolkit();
-        Dimension screenSize = kit.getScreenSize();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int screenWidth = screenSize.width;
         int screenHeight = screenSize.height;
-        this.setLocation((int) (screenWidth / 2.2 - windowWidth / 2.2),
-                (int) (screenHeight / 2.2 - windowHeight / 2.2));
+        this.setLocation((int) (screenWidth / 2.2 - this.getWidth() / 2.2),
+                (int) (screenHeight / 2.2 - this.getHeight() / 2.2));
         this.setName("嘿嘿嘿");
         setSize(200, 100);
         setVisible(true);
@@ -130,7 +127,6 @@ public class Fishing extends JFrame {
     }
 
     public static void main(String[] args) {
-        System.out.println(new File("").getAbsolutePath());
         Fishing fishing = new Fishing();
         fishing.auto();
     }
@@ -187,7 +183,6 @@ public class Fishing extends JFrame {
                 //noinspection InfiniteLoopStatement
                 while (true) {
                     if (start) {
-                        randomSleep(1, 445);
                         usingFishingSkill();
                         resetMousePoint();
                         Target target = detectFishingLine(robot);
@@ -208,7 +203,7 @@ public class Fishing extends JFrame {
 
     private void getFish(Target target) throws InterruptedException {
         robot.mouseMove(screenCutX + target.x, screenCutY + target.y);
-        randomSleep(350, 250);
+        randomSleep(300, 200);
         gameAction.start(mouseL);
         randomSleep(1000, 300);
     }
@@ -355,28 +350,7 @@ public class Fishing extends JFrame {
             sleep(sleepTime + random.nextInt(randomArea));
         }
     }
-//            if (screenWidth <= 1366) {
-////            loadBarX = 583;
-////            loadBarY = 563;
-//        loadBarX = 592;
-//        loadBarY = 565;
-//        sprayStep = 930;
-//    }
-
-
-//    private boolean isFriends() throws IOException {
-//        Process process = Runtime.getRuntime().exec(
-//                new String[]{"wmic", "cpu", "get", "ProcessorId"});
-//        process.getOutputStream().close();
-//        Scanner sc = new Scanner(process.getInputStream());
-//        String property = sc.next();
-//        String serial = sc.next();
-//        String serialMD5 = MD5Util.stringMD5(serial);
-//        System.out.println(serialMD5);
-//        System.out.println(serialMD5.equals("568B8FA5CDFD8A2623BDA1D8AB7B7B34"));
-//        return (serialMD5.equals("568B8FA5CDFD8A2623BDA1D8AB7B7B34"));
-//    }
-//robot.MoveMouseControlled(screenCutX + target.x, screenCutY + target.y);
-//Point point = java.awt.MouseInfo.getPointerInfo().getLocation();
+    //robot.MoveMouseControlled(screenCutX + target.x, screenCutY + target.y);
+    //Point point = java.awt.MouseInfo.getPointerInfo().getLocation();
 }
 
