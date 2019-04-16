@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Class-Path: jna-4.1.0.jar opencv-343.jar jlayer-1.0.1.jar platform-3.5
- .2.jar
+Class-Path: jna-4.1.0.jar platform-3.5.2.jar jlayer-1.0.1.jar opencv-3
+ 43.jar
 Main-Class: Fishing
 

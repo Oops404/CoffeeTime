@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact name="CoffeeTime:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CoffeeTime_jar</output-path>
+    <root id="root">
+      <element id="archive" name="CoffeeTime.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="CoffeeTime" />
+      </element>
+      <element id="library" level="project" name="Maven: net.java.dev.jna:jna:4.1.0" />
+      <element id="library" level="project" name="Maven: net.java.dev.jna:platform:3.5.2" />
+      <element id="library" level="project" name="Maven: javazoom:jlayer:1.0.1" />
+      <element id="library" level="project" name="libs" />
+    </root>
+  </artifact>
+</component>

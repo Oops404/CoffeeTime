@@ -1,4 +1,4 @@
-package util;
+package mouse;
 
 import java.awt.AWTException;
 import java.awt.Dimension;

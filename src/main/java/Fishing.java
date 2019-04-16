@@ -12,9 +12,10 @@ import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import sound.SoundPlayer;
+import util.CTMat;
 import util.ConfigUtil;
 import util.ImageViewer;
-import util.MouseCorrectRobot;
+import mouse.MouseCorrectRobot;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -42,6 +43,7 @@ public class Fishing extends JFrame {
     private int screenCutX = (int) (screenWidth * 0.3);
     private int screenCutY = (int) (screenHeight * 0.2);
     private int lh, ls, lv, hh, hs, hv;
+    private int getFishAlignX, getFishAlignY;
     private boolean maskDebug, catchDebug, loadBarDebug, sprayAreaDebug;
     private int loadBarX, loadBarY, sprayStep, targetThreshold, targetAlignX, targetAlignY, targetSize;
     private GameAction gameAction;
@@ -102,6 +104,9 @@ public class Fishing extends JFrame {
         targetAlignX = configUtil.getValue("targetAlignX", 0);
         targetAlignY = configUtil.getValue("targetAlignY", 0);
         targetSize = configUtil.getValue("targetSize", 55);
+
+        getFishAlignX = configUtil.getValue("getFishAlignX", 5);
+        getFishAlignY = configUtil.getValue("getFishAlignY", 0);
 
         lh = configUtil.getValue("lh", 35);
         ls = configUtil.getValue("ls", 110);
@@ -166,24 +171,32 @@ public class Fishing extends JFrame {
         }
     }
 
+    private void resetMousePoint() throws InterruptedException {
+        robot.mouseMove(100 + random.nextInt(400), 100 + random.nextInt(400));
+        randomSleep(4000, 500);
+    }
+
+    private void usingFishingSkill() {
+        gameAction.start(button1);
+    }
+
     private class Monitor extends Thread {
         @Override
         public void run() {
             try {
-                System.out.println("start fishing");
                 //noinspection InfiniteLoopStatement
                 while (true) {
                     if (start) {
                         randomSleep(1, 445);
-                        gameAction.start(button1);
-                        robot.mouseMove(100 + random.nextInt(400),
-                                100 + random.nextInt(400));
-                        randomSleep(4000, 500);
-                        Target target = catchTarget(robot);
-                        if (target.x != 0 && target.y != 0) {
-                            fishing(robot, target);
+                        usingFishingSkill();
+                        resetMousePoint();
+                        Target target = detectFishingLine(robot);
+                        if (!target.isEmpty()) {
+                            fishing(target);
+                        } else {
+                            System.out.println("can not find fishing line.");
                         }
-                        System.out.println("~~~~~~~~~~~~~~~~~");
+                        System.out.println("--- step finish ---");
                     }
                     sleep(1);
                 }
@@ -193,124 +206,126 @@ public class Fishing extends JFrame {
         }
     }
 
-    private void fishing(MouseCorrectRobot robot, Target target) {
+    private void getFish(Target target) throws InterruptedException {
+        robot.mouseMove(screenCutX + target.x, screenCutY + target.y);
+        randomSleep(350, 250);
+        gameAction.start(mouseL);
+        randomSleep(1000, 300);
+    }
+
+    private void fishing(Target target) throws InterruptedException {
         ArrayList<Long> frames = new ArrayList<>();
         while (true) {
-            Mat fishingLoadBarMat = null;
-            Mat sprayAreaMat = null;
-            Mat grayTargetMat = null;
-            try {
-                BufferedImage fishingLoadBar = robot.createScreenCapture(new Rectangle(
-                        loadBarX, loadBarY, 2, 2));//860, 875
-                fishingLoadBarMat = bufferedImage2Mat(fishingLoadBar);
-                double[] pixel = new double[0];
-                if (fishingLoadBarMat != null) {
-                    pixel = fishingLoadBarMat.get(0, 0);
-                    if (loadBarDebug) {
-                        Imgcodecs.imwrite(ConfigUtil.root() + "/loadBar.jpg", fishingLoadBarMat);
-                    }
-                } else {
-                    System.out.println("loading bar mat is null");
-                }
-                if (pixel.length != 0 && (pixel[1] - (pixel[0] + pixel[2]) > 110)) {
-                    BufferedImage targetScape = robot.createScreenCapture(new Rectangle(
-                            screenCutX + target.x + targetAlignX, screenCutY + target.y + targetAlignY,
-                            targetSize, targetSize));
-                    sprayAreaMat = bufferedImage2Mat(targetScape);
-                    if (sprayAreaMat == null) {
-                        System.out.println("target not found.");
-                        return;
-                    }
-                    if (sprayAreaDebug) {
-                        Imgcodecs.imwrite(ConfigUtil.root() + "/sprayArea.jpg", sprayAreaMat);
-                    }
-                    grayTargetMat = new Mat();
-                    Imgproc.cvtColor(sprayAreaMat, grayTargetMat, Imgproc.COLOR_BGR2GRAY);
-                    int width = grayTargetMat.cols();
-                    int height = grayTargetMat.rows();
-                    long sum = 0;
-                    for (int y = 0; y < height; y++) {
-                        for (int x = 0; x < width; x++) {
-                            sum += grayTargetMat.get(y, x)[0];
-                        }
-                    }
-                    frames.add(sum);
-                    if (frames.size() >= 5
-                            && frames.get(frames.size() - 1) > frames.get(frames.size() - 2) + sprayStep
-                            && frames.get(frames.size() - 2) > frames.get(frames.size() - 3) + sprayStep
-                            && frames.get(frames.size() - 3) > frames.get(frames.size() - 4) + sprayStep
-                            && frames.get(frames.size() - 4) > frames.get(frames.size() - 5) + sprayStep
-                    ) {
-                        if (catchDebug) {
-                            Imgcodecs.imwrite(ConfigUtil.root() + "/catch.jpg", sprayAreaMat);
-                        }
-                        robot.mouseMove(screenCutX + target.x, screenCutY + target.y);
-                        randomSleep(500, 300);
-                        gameAction.start(mouseL);
-                        randomSleep(1000, 300);
-                        return;
-                    }
-                } else {
-                    System.out.println("can not find loading bar.");
-                    randomSleep(1, 99);
-                    return;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (fishingLoadBarMat != null) {
-                    fishingLoadBarMat.release();
-                }
-                if (sprayAreaMat != null) {
-                    sprayAreaMat.release();
-                }
-                if (grayTargetMat != null) {
-                    grayTargetMat.release();
-                }
+            if (!detectLoadingBar()) {
+                System.out.println("can not find loading bar.");
+                randomSleep(1, 99);
+                return;
             }
+            if (detectSpray(frames, target)) {
+                getFish(target);
+                break;
+            }
+            sleep(1);
         }
     }
 
-    private Target catchTarget(Robot robot) {
-        BufferedImage waterScape = robot.createScreenCapture(new Rectangle(
-                screenCutX, screenCutY,
-                (int) (screenWidth * 0.35), (int) (screenHeight * 0.35))
+    private boolean detectLoadingBar() {
+        BufferedImage fishingLoadingBar = robot.createScreenCapture(new Rectangle(
+                loadBarX, loadBarY, 2, 2));
+        try (CTMat loadingBar = new CTMat(bufferedImage2Mat(fishingLoadingBar), "loadingBar")) {
+            double[] pixel = loadingBar.getMat().get(0, 0);
+            if (loadBarDebug) {
+                Imgcodecs.imwrite(ConfigUtil.root() + "/loadBar.jpg", loadingBar.getMat());
+            }
+            return pixel.length != 0 && (pixel[1] - (pixel[0] + pixel[2]) > 110);
+        } catch (Exception e) {
+            System.out.println("detect loading bar error.");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean detectSpray(ArrayList<Long> frames, Target target) {
+        BufferedImage targetScape = robot.createScreenCapture(
+                new Rectangle(screenCutX + target.x + targetAlignX, screenCutY + target.y + targetAlignY,
+                        targetSize, targetSize));
+        try (CTMat sprayArea = new CTMat(bufferedImage2Mat(targetScape),"sprayArea");
+             CTMat graySprayArea = new CTMat(new Mat(),"graySprayArea")) {
+            if (sprayAreaDebug) {
+                Imgcodecs.imwrite(ConfigUtil.root() + "/sprayArea.jpg", sprayArea.getMat());
+            }
+            Imgproc.cvtColor(sprayArea.getMat(), graySprayArea.getMat(), Imgproc.COLOR_BGR2GRAY);
+            int width = graySprayArea.getMat().cols();
+            int height = graySprayArea.getMat().rows();
+            long sum = 0;
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    sum += graySprayArea.getMat().get(y, x)[0];
+                }
+            }
+            frames.add(sum);
+            int framesSize = frames.size();
+            if (framesSize >= 5
+                    && frames.get(framesSize - 1) > frames.get(framesSize - 2) + sprayStep
+                    && frames.get(framesSize - 2) > frames.get(framesSize - 3) + sprayStep
+                    && frames.get(framesSize - 3) > frames.get(framesSize - 4) + sprayStep
+                    && frames.get(framesSize - 4) > frames.get(framesSize - 5) + sprayStep
+            ) {
+                if (catchDebug) {
+                    Imgcodecs.imwrite(ConfigUtil.root() + "/catch.jpg", sprayArea.getMat());
+                }
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("detect spray action error.");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private Target detectFishingLine(Robot robot) {
+        BufferedImage waterScape = robot.createScreenCapture(
+                new Rectangle(screenCutX, screenCutY, (int) (screenWidth * 0.35), (int) (screenHeight * 0.35))
         );
-        Mat ori = bufferedImage2Mat(waterScape);
-        if (ori == null) {
-            return new Target(0, 0);
+        try (CTMat scape = new CTMat(bufferedImage2Mat(waterScape),"scape");
+             CTMat mask = new CTMat(new Mat(),"mask")) {
+            Imgproc.cvtColor(scape.getMat(), scape.getMat(), Imgproc.COLOR_RGB2HSV);
+            Core.inRange(scape.getMat(), lower_red, upper_red, mask.getMat());
+            if (maskDebug) {
+                Imgcodecs.imwrite(ConfigUtil.root() + "/mask.jpg", mask.getMat());
+            }
+            return selectFishingLinePoint(mask.getMat());
+        } catch (Exception e) {
+            System.out.println("detect Fishing Line error.");
+            e.printStackTrace();
         }
-        Imgproc.cvtColor(ori, ori, Imgproc.COLOR_RGB2HSV);
-        Mat mask = new Mat();
-        Core.inRange(ori, lower_red, upper_red, mask);
-        if (maskDebug) {
-            Imgcodecs.imwrite(ConfigUtil.root() + "/mask.jpg", mask);
-        }
-        int targetX = 0, targetY = 0, count = 0;
-        for (int y = 0; y < mask.rows(); y++) {
-            for (int x = 0; x < mask.cols(); x++) {
-                double[] pixels = mask.get(y, x);
+        return new Target(0, 0);
+    }
+
+    private Target selectFishingLinePoint(Mat mask) {
+        int x = 0, y = 0, count = 0;
+        for (int r = 0; r < mask.rows(); r++) {
+            for (int c = 0; c < mask.cols(); c++) {
+                double[] pixels = mask.get(r, c);
                 if (pixels[0] == 255) {
                     if (count == targetThreshold) {
-                        targetX = x + 5;
-                        targetY = y;
+                        x = c + getFishAlignX;
+                        y = r + getFishAlignY;
                         break;
                     }
                     count++;
                 }
             }
         }
-        ori.release();
-        mask.release();
-        System.out.println("target: " + targetX + " , " + targetY);
-        return new Target(targetX, targetY);
+        return new Target(x, y);
     }
 
     private Mat bufferedImage2Mat(BufferedImage image) {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             ImageIO.write(image, "jpg", byteArrayOutputStream);
             byteArrayOutputStream.flush();
-            return Imgcodecs.imdecode(new MatOfByte(byteArrayOutputStream.toByteArray()), Imgcodecs.CV_LOAD_IMAGE_UNCHANGED);
+            return Imgcodecs.imdecode(
+                    new MatOfByte(byteArrayOutputStream.toByteArray()), Imgcodecs.CV_LOAD_IMAGE_UNCHANGED);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -328,6 +343,10 @@ public class Fishing extends JFrame {
         Target(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        boolean isEmpty() {
+            return this.x == 0 && this.y == 0;
         }
     }
 
