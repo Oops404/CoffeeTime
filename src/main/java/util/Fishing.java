@@ -1,3 +1,5 @@
+package util;
+
 import action.ActionButton1;
 import action.ActionMouseL;
 import action.GameAction;
@@ -30,7 +32,6 @@ import static java.lang.Thread.sleep;
 
 public class Fishing extends JFrame {
 
-    private ConfigUtil configUtil;
     private Scalar lower_red;
     private Scalar upper_red;
     private ActionButton1 button1 = new ActionButton1(300);
@@ -49,50 +50,18 @@ public class Fishing extends JFrame {
     private GameAction gameAction;
     private MouseCorrectRobot robot;
 
-    public Fishing() throws HeadlessException {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
-        this.setLocation((int) (screenWidth / 2.2 - this.getWidth() / 2.2),
-                (int) (screenHeight / 2.2 - this.getHeight() / 2.2));
-        this.setName("嘿嘿嘿");
-        setSize(200, 100);
-        setVisible(true);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        JPanel contentPane = new JPanel();
-        contentPane.setLayout(new BorderLayout());
-        this.setContentPane(contentPane);
-        JButton guide = new JButton("说明");
-        guide.setFont(new Font("黑体", Font.PLAIN, 17));
-        contentPane.add(guide);
-        try {
-            configUtil = new ConfigUtil();
-        } catch (Exception e) {
-            e.printStackTrace();
-            guide.setText("读取配置失败");
-        }
-        initData();
-        try {
-            initController();
-        } catch (AWTException e) {
-            e.printStackTrace();
-            guide.setText("自动控制失败");
-        }
-        guide.addActionListener(e -> {
-            Mat guideJpg = null;
-            try {
-                guideJpg = Imgcodecs.imread(ConfigUtil.root() + "\\libs\\guide");
-                ImageViewer imageViewer = new ImageViewer(guideJpg, "说明");
-                imageViewer.imShow();
-            } finally {
-                if (guideJpg != null) {
-                    guideJpg.release();
-                }
-            }
-        });
+    public Fishing(ConfigUtil configUtil) throws AWTException {
+        initData(configUtil);
+        initController();
     }
 
-    private void initData() {
+    public void auto() {
+        Monitor monitor = new Monitor();
+        monitor.start();
+        mouseControl();
+    }
+
+    private void initData(ConfigUtil configUtil) {
         loadBarX = configUtil.getValue("loadBarX", 860);
         loadBarY = configUtil.getValue("loadBarY", 875);
         sprayStep = configUtil.getValue("sprayStep", 921);
@@ -124,17 +93,6 @@ public class Fishing extends JFrame {
     private void initController() throws AWTException {
         robot = new MouseCorrectRobot();
         gameAction = new GameAction(robot);
-    }
-
-    public static void main(String[] args) {
-        Fishing fishing = new Fishing();
-        fishing.auto();
-    }
-
-    private void auto() {
-        Monitor monitor = new Monitor();
-        monitor.start();
-        mouseControl();
     }
 
     private void mouseControl() {
@@ -244,8 +202,8 @@ public class Fishing extends JFrame {
         BufferedImage targetScape = robot.createScreenCapture(
                 new Rectangle(screenCutX + target.x + targetAlignX, screenCutY + target.y + targetAlignY,
                         targetSize, targetSize));
-        try (CTMat sprayArea = new CTMat(bufferedImage2Mat(targetScape),"sprayArea");
-             CTMat graySprayArea = new CTMat(new Mat(),"graySprayArea")) {
+        try (CTMat sprayArea = new CTMat(bufferedImage2Mat(targetScape), "sprayArea");
+             CTMat graySprayArea = new CTMat(new Mat(), "graySprayArea")) {
             if (sprayAreaDebug) {
                 Imgcodecs.imwrite(ConfigUtil.root() + "/sprayArea.jpg", sprayArea.getMat());
             }
@@ -282,8 +240,8 @@ public class Fishing extends JFrame {
         BufferedImage waterScape = robot.createScreenCapture(
                 new Rectangle(screenCutX, screenCutY, (int) (screenWidth * 0.35), (int) (screenHeight * 0.35))
         );
-        try (CTMat scape = new CTMat(bufferedImage2Mat(waterScape),"scape");
-             CTMat mask = new CTMat(new Mat(),"mask")) {
+        try (CTMat scape = new CTMat(bufferedImage2Mat(waterScape), "scape");
+             CTMat mask = new CTMat(new Mat(), "mask")) {
             Imgproc.cvtColor(scape.getMat(), scape.getMat(), Imgproc.COLOR_RGB2HSV);
             Core.inRange(scape.getMat(), lower_red, upper_red, mask.getMat());
             if (maskDebug) {
@@ -291,7 +249,7 @@ public class Fishing extends JFrame {
             }
             return selectFishingLinePoint(mask.getMat());
         } catch (Exception e) {
-            System.out.println("detect Fishing Line error.");
+            System.out.println("detect util.Fishing Line error.");
             e.printStackTrace();
         }
         return new Target(0, 0);
@@ -350,7 +308,50 @@ public class Fishing extends JFrame {
             sleep(sleepTime + random.nextInt(randomArea));
         }
     }
-    //robot.MoveMouseControlled(screenCutX + target.x, screenCutY + target.y);
-    //Point point = java.awt.MouseInfo.getPointerInfo().getLocation();
 }
+//robot.MoveMouseControlled(screenCutX + target.x, screenCutY + target.y);
+//Point point = java.awt.MouseInfo.getPointerInfo().getLocation();
 
+
+//    public util.Fishing() throws HeadlessException {
+//        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        int screenWidth = screenSize.width;
+//        int screenHeight = screenSize.height;
+//        this.setLocation((int) (screenWidth / 2.2 - this.getWidth() / 2.2),
+//                (int) (screenHeight / 2.2 - this.getHeight() / 2.2));
+//        this.setName("嘿嘿嘿");
+//        setSize(200, 100);
+//        setVisible(true);
+//        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+//        JPanel contentPane = new JPanel();
+//        contentPane.setLayout(new BorderLayout());
+//        this.setContentPane(contentPane);
+//        JButton guide = new JButton("说明");
+//        guide.setFont(new Font("黑体", Font.PLAIN, 17));
+//        contentPane.add(guide);
+//        try {
+//            configUtil = new ConfigUtil();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            guide.setText("读取配置失败");
+//        }
+//        initData();
+//        try {
+//            initController();
+//        } catch (AWTException e) {
+//            e.printStackTrace();
+//            guide.setText("自动控制失败");
+//        }
+//        guide.addActionListener(e -> {
+//            Mat guideJpg = null;
+//            try {
+//                guideJpg = Imgcodecs.imread(ConfigUtil.root() + "\\libs\\guide");
+//                ImageViewer imageViewer = new ImageViewer(guideJpg, "说明");
+//                imageViewer.imShow();
+//            } finally {
+//                if (guideJpg != null) {
+//                    guideJpg.release();
+//                }
+//            }
+//        });
+//    }

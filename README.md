@@ -1,3 +1,3 @@
 # CoffeeTime
 AFK assistant.
-let it to do  waste of time.
+let it to do something repeated without waste of time.

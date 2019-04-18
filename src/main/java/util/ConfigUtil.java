@@ -19,8 +19,25 @@ public class ConfigUtil implements AutoCloseable {
         }
     }
 
+    public ConfigUtil(File file) throws Exception {
+        if (!exist(file)) {
+            throw new Exception("load config failed");
+        }
+    }
+
     public static String root() {
         return new File("").getAbsolutePath();
+    }
+
+    private boolean exist(File file) {
+        try {
+            fis = new BufferedInputStream(new FileInputStream(file));
+            properties.load(fis);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private boolean exist() {
@@ -28,7 +45,6 @@ public class ConfigUtil implements AutoCloseable {
             fis = new BufferedInputStream(
                     new FileInputStream(root() + "/" + "settings.ini"));
             properties.load(fis);
-            System.out.println(properties.propertyNames());
             return true;
         } catch (IOException e) {
             e.printStackTrace();

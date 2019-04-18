@@ -25,7 +25,7 @@ import static java.lang.Thread.sleep;
  * wParam：要传递的参数; 由钩子类型决定是什么参数，此参数的含义取决于当前的钩链与钩的类型。
  * lParam：Param的值传递给当前Hook过程。此参数的含义取决于当前的钩链与钩的类型。
  */
-public class CrusaderTest {
+public class Diablo3Crusader {
 
     private ActionButton1 button1 = new ActionButton1(300);
     private ActionButton2 button2 = new ActionButton2(300);
@@ -59,7 +59,7 @@ public class CrusaderTest {
     private GameAction gameAction = new GameAction(robot);
 
     public static void main(String[] args) {
-        CrusaderTest ct = new CrusaderTest();
+        Diablo3Crusader ct = new Diablo3Crusader();
         ct.auto();
     }
 
