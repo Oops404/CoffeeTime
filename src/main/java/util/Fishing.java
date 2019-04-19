@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
@@ -43,60 +44,77 @@ public class Fishing extends JFrame {
     private boolean start = false;
     private int screenCutX = (int) (screenWidth * 0.3);
     private int screenCutY = (int) (screenHeight * 0.2);
-    private int lh, ls, lv, hh, hs, hv;
-    private int getFishAlignX, getFishAlignY;
-    private boolean maskDebug, catchDebug, loadBarDebug, sprayAreaDebug;
-    private int loadBarX, loadBarY, sprayStep, targetThreshold, targetAlignX, targetAlignY, targetSize;
+
     private GameAction gameAction;
     private MouseCorrectRobot robot;
+    private Properties pros = new Properties();
 
-    public Fishing(ConfigUtil configUtil) throws AWTException {
-        initData(configUtil);
+    private boolean close = false;
+    private MouseHook mouseHook;
+
+    public class Properties {
+        public int lh, ls, lv, hh, hs, hv;
+        public int getFishAlignX, getFishAlignY;
+        public boolean maskDebug, catchDebug, loadBarDebug, sprayAreaDebug;
+        public int loadBarX, loadBarY, sprayStep, targetThreshold, targetAlignX, targetAlignY, targetSize;
+    }
+
+    public Properties getProperties() {
+        return pros;
+    }
+
+    public Fishing() throws AWTException {
         initController();
     }
 
     public void auto() {
+        close = false;
+        mouseControl();
         Monitor monitor = new Monitor();
         monitor.start();
-        mouseControl();
     }
 
-    private void initData(ConfigUtil configUtil) {
-        loadBarX = configUtil.getValue("loadBarX", 860);
-        loadBarY = configUtil.getValue("loadBarY", 875);
-        sprayStep = configUtil.getValue("sprayStep", 921);
-        targetThreshold = configUtil.getValue("targetThreshold", 20);
+    public void close() {
+        this.close = true;
+        mouseHook.stopWindowsHookEx();
+    }
 
-        targetAlignX = configUtil.getValue("targetAlignX", 0);
-        targetAlignY = configUtil.getValue("targetAlignY", 0);
-        targetSize = configUtil.getValue("targetSize", 55);
+    public void loadProperties(ConfigUtil configUtil) {
+        pros.loadBarX = configUtil.getValue("loadBarX", 860);
+        pros.loadBarY = configUtil.getValue("loadBarY", 875);
+        pros.sprayStep = configUtil.getValue("sprayStep", 921);
+        pros.targetThreshold = configUtil.getValue("targetThreshold", 20);
 
-        getFishAlignX = configUtil.getValue("getFishAlignX", 5);
-        getFishAlignY = configUtil.getValue("getFishAlignY", 0);
+        pros.targetAlignX = configUtil.getValue("targetAlignX", 0);
+        pros.targetAlignY = configUtil.getValue("targetAlignY", 0);
+        pros.targetSize = configUtil.getValue("targetSize", 55);
 
-        lh = configUtil.getValue("lh", 35);
-        ls = configUtil.getValue("ls", 110);
-        lv = configUtil.getValue("lv", 110);
-        lower_red = new Scalar(lh, ls, lv);
+        pros.getFishAlignX = configUtil.getValue("getFishAlignX", 5);
+        pros.getFishAlignY = configUtil.getValue("getFishAlignY", 0);
 
-        hh = configUtil.getValue("hh", 119);
-        hs = configUtil.getValue("hs", 255);
-        hv = configUtil.getValue("hv", 255);
-        upper_red = new Scalar(hh, hs, hv);
+        pros.lh = configUtil.getValue("lh", 35);
+        pros.ls = configUtil.getValue("ls", 110);
+        pros.lv = configUtil.getValue("lv", 110);
+        lower_red = new Scalar(pros.lh, pros.ls, pros.lv);
 
-        maskDebug = configUtil.getValueBool("maskDebug", true);
-        catchDebug = configUtil.getValueBool("catchDebug", true);
-        loadBarDebug = configUtil.getValueBool("loadBarDebug", true);
-        sprayAreaDebug = configUtil.getValueBool("sprayAreaDebug", true);
+        pros.hh = configUtil.getValue("hh", 119);
+        pros.hs = configUtil.getValue("hs", 255);
+        pros.hv = configUtil.getValue("hv", 255);
+        upper_red = new Scalar(pros.hh, pros.hs, pros.hv);
+
+        pros.maskDebug = configUtil.getValueBool("maskDebug", true);
+        pros.catchDebug = configUtil.getValueBool("catchDebug", true);
+        pros.loadBarDebug = configUtil.getValueBool("loadBarDebug", true);
+        pros.sprayAreaDebug = configUtil.getValueBool("sprayAreaDebug", true);
     }
 
     private void initController() throws AWTException {
+        mouseHook = new MouseHook();
         robot = new MouseCorrectRobot();
         gameAction = new GameAction(robot);
     }
 
     private void mouseControl() {
-        MouseHook mouseHook = new MouseHook();
         try {
             mouseHook.addMouseHookListener(new MouseHookListener() {
 
@@ -114,14 +132,12 @@ public class Fishing extends JFrame {
                         }
                     }
                     sleep(1);
-                    return lib.CallNextHookEx(hHook, nCode, wParam, lParam.getPointer());
+                    return lib.CallNextHookEx(null, nCode, wParam, lParam.getPointer());
                 }
             });
             mouseHook.startWindowsHookEx();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            mouseHook.stopWindowsHookEx();
         }
     }
 
@@ -139,7 +155,7 @@ public class Fishing extends JFrame {
         public void run() {
             try {
                 //noinspection InfiniteLoopStatement
-                while (true) {
+                while (!close) {
                     if (start) {
                         usingFishingSkill();
                         resetMousePoint();
@@ -155,6 +171,8 @@ public class Fishing extends JFrame {
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } finally {
+                System.out.println("Monitor is closed.");
             }
         }
     }
@@ -184,10 +202,10 @@ public class Fishing extends JFrame {
 
     private boolean detectLoadingBar() {
         BufferedImage fishingLoadingBar = robot.createScreenCapture(new Rectangle(
-                loadBarX, loadBarY, 2, 2));
+                pros.loadBarX, pros.loadBarY, 2, 2));
         try (CTMat loadingBar = new CTMat(bufferedImage2Mat(fishingLoadingBar), "loadingBar")) {
             double[] pixel = loadingBar.getMat().get(0, 0);
-            if (loadBarDebug) {
+            if (pros.loadBarDebug) {
                 Imgcodecs.imwrite(ConfigUtil.root() + "/loadBar.jpg", loadingBar.getMat());
             }
             return pixel.length != 0 && (pixel[1] - (pixel[0] + pixel[2]) > 110);
@@ -200,11 +218,11 @@ public class Fishing extends JFrame {
 
     private boolean detectSpray(ArrayList<Long> frames, Target target) {
         BufferedImage targetScape = robot.createScreenCapture(
-                new Rectangle(screenCutX + target.x + targetAlignX, screenCutY + target.y + targetAlignY,
-                        targetSize, targetSize));
+                new Rectangle(screenCutX + target.x + pros.targetAlignX, screenCutY + target.y + pros.targetAlignY,
+                        pros.targetSize, pros.targetSize));
         try (CTMat sprayArea = new CTMat(bufferedImage2Mat(targetScape), "sprayArea");
              CTMat graySprayArea = new CTMat(new Mat(), "graySprayArea")) {
-            if (sprayAreaDebug) {
+            if (pros.sprayAreaDebug) {
                 Imgcodecs.imwrite(ConfigUtil.root() + "/sprayArea.jpg", sprayArea.getMat());
             }
             Imgproc.cvtColor(sprayArea.getMat(), graySprayArea.getMat(), Imgproc.COLOR_BGR2GRAY);
@@ -219,12 +237,12 @@ public class Fishing extends JFrame {
             frames.add(sum);
             int framesSize = frames.size();
             if (framesSize >= 5
-                    && frames.get(framesSize - 1) > frames.get(framesSize - 2) + sprayStep
-                    && frames.get(framesSize - 2) > frames.get(framesSize - 3) + sprayStep
-                    && frames.get(framesSize - 3) > frames.get(framesSize - 4) + sprayStep
-                    && frames.get(framesSize - 4) > frames.get(framesSize - 5) + sprayStep
+                    && frames.get(framesSize - 1) > frames.get(framesSize - 2) + pros.sprayStep
+                    && frames.get(framesSize - 2) > frames.get(framesSize - 3) + pros.sprayStep
+                    && frames.get(framesSize - 3) > frames.get(framesSize - 4) + pros.sprayStep
+                    && frames.get(framesSize - 4) > frames.get(framesSize - 5) + pros.sprayStep
             ) {
-                if (catchDebug) {
+                if (pros.catchDebug) {
                     Imgcodecs.imwrite(ConfigUtil.root() + "/catch.jpg", sprayArea.getMat());
                 }
                 return true;
@@ -244,7 +262,7 @@ public class Fishing extends JFrame {
              CTMat mask = new CTMat(new Mat(), "mask")) {
             Imgproc.cvtColor(scape.getMat(), scape.getMat(), Imgproc.COLOR_RGB2HSV);
             Core.inRange(scape.getMat(), lower_red, upper_red, mask.getMat());
-            if (maskDebug) {
+            if (pros.maskDebug) {
                 Imgcodecs.imwrite(ConfigUtil.root() + "/mask.jpg", mask.getMat());
             }
             return selectFishingLinePoint(mask.getMat());
@@ -261,9 +279,9 @@ public class Fishing extends JFrame {
             for (int c = 0; c < mask.cols(); c++) {
                 double[] pixels = mask.get(r, c);
                 if (pixels[0] == 255) {
-                    if (count == targetThreshold) {
-                        x = c + getFishAlignX;
-                        y = r + getFishAlignY;
+                    if (count == pros.targetThreshold) {
+                        x = c + pros.getFishAlignX;
+                        y = r + pros.getFishAlignY;
                         break;
                     }
                     count++;

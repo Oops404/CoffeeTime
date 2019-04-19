@@ -12,13 +12,12 @@ import com.sun.jna.platform.win32.WinUser.MSG;
  * 鼠标钩子
  */
 public class MouseHook {
-    //鼠标事件编码
 
     private User32 lib;
-    private HHOOK hHook;
     private MouseHookListener mouseHook;
     private HMODULE hMod;
     private boolean isWindows;
+    private HHOOK hHook;
 
     public MouseHook() {
         isWindows = Platform.isWindows();
@@ -35,32 +34,16 @@ public class MouseHook {
         this.mouseHook.lib = lib;
     }
 
-    //启动
     public void startWindowsHookEx() {
         if (isWindows) {
-            lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHook, hMod, 0);
-            int result;
-            MSG msg = new MSG();
-            while ((result = lib.GetMessage(msg, null, 0, 0)) != 0) {
-                if (result == -1) {
-                    System.err.println("error in get message");
-                    break;
-                } else {
-                    System.err.println("got message");
-                    lib.TranslateMessage(msg);
-                    lib.DispatchMessage(msg);
-                }
-            }
+            hHook = lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHook, hMod, 0);
         }
-
     }
 
-    //关闭
     public void stopWindowsHookEx() {
         if (isWindows) {
             lib.UnhookWindowsHookEx(hHook);
+            System.out.println("hHook is closed.");
         }
-
     }
-
 }

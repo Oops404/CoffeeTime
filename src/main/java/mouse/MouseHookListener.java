@@ -13,7 +13,6 @@ public abstract class MouseHookListener implements HOOKPROC {
     //window应用程序接口
     protected User32 lib = null;
     //钩子的句柄
-    protected HHOOK hHook;
 
     //回调
     //返回这个值链中的下一个钩子程序，返回值的含义取决于钩型

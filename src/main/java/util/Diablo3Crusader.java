@@ -1,3 +1,5 @@
+package util;
+
 import action.*;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
@@ -58,10 +60,10 @@ public class Diablo3Crusader {
 
     private GameAction gameAction = new GameAction(robot);
 
-    public static void main(String[] args) {
-        Diablo3Crusader ct = new Diablo3Crusader();
-        ct.auto();
-    }
+//    public static void main(String[] args) {
+//        Diablo3Crusader ct = new Diablo3Crusader();
+//        ct.auto();
+//    }
 
     private boolean findD3HWND() {
         WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, "暗黑破壞神III");
@@ -151,14 +153,12 @@ public class Diablo3Crusader {
                         }
                     }
                     sleep(1);
-                    return lib.CallNextHookEx(hHook, nCode, wParam, lParam.getPointer());
+                    return lib.CallNextHookEx(null, nCode, wParam, lParam.getPointer());
                 }
             });
             mouseHook.startWindowsHookEx();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            mouseHook.stopWindowsHookEx();
         }
     }
 
