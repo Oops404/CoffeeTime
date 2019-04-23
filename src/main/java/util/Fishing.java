@@ -4,6 +4,8 @@ import action.ActionButton1;
 import action.ActionMouseL;
 import action.GameAction;
 import com.sun.jna.platform.win32.WinDef;
+import javafx.scene.control.ListView;
+import mouse.MouseCorrectRobot;
 import mouse.MouseHook;
 import mouse.MouseHookListener;
 import mouse.MouseHookStruct;
@@ -14,24 +16,17 @@ import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import sound.SoundPlayer;
-import util.CTMat;
-import util.ConfigUtil;
-import util.ImageViewer;
-import mouse.MouseCorrectRobot;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
 
-public class Fishing extends JFrame {
+public class Fishing {
 
     private Scalar lower_red;
     private Scalar upper_red;
@@ -63,7 +58,7 @@ public class Fishing extends JFrame {
         return pros;
     }
 
-    public Fishing() throws AWTException {
+    public Fishing(){
         initController();
     }
 
@@ -108,9 +103,13 @@ public class Fishing extends JFrame {
         pros.sprayAreaDebug = configUtil.getValueBool("sprayAreaDebug", true);
     }
 
-    private void initController() throws AWTException {
+    private void initController(){
         mouseHook = new MouseHook();
-        robot = new MouseCorrectRobot();
+        try {
+            robot = new MouseCorrectRobot();
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
         gameAction = new GameAction(robot);
     }
 
@@ -325,6 +324,10 @@ public class Fishing extends JFrame {
         if (sleepTime > 0 && randomArea >= 0) {
             sleep(sleepTime + random.nextInt(randomArea));
         }
+    }
+
+    private void logOnUI(ListView<String> listView, String value) {
+        listView.getItems().add(0, value);
     }
 }
 //robot.MoveMouseControlled(screenCutX + target.x, screenCutY + target.y);

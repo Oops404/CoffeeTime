@@ -1,9 +1,6 @@
 package controller;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import bean.ConfigItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -41,19 +39,44 @@ public class CoffeeTimeController implements Initializable {
     @FXML
     private Button guideButton;
     @FXML
-    private TableView configContent;
+    private TableView<ConfigItem> configTable;
     @FXML
-    private TableColumn property, value;
+    private TableColumn<ConfigItem, String> configKeyCol;
+    @FXML
+    private TableColumn<ConfigItem, String> configValueCol;
     @FXML
     private ListView<String> logList;
 
     private Fishing fishing;
 
-    public CoffeeTimeController() throws AWTException {
-        fishing = new Fishing();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        System.out.println("init");
+        ObservableList<ConfigItem> list = FXCollections.observableArrayList();
+        list.add(new ConfigItem("value", "123"));
+
+        configTable.setItems(list);
+        configTable.getItems().add(new ConfigItem("value2", "1233"));
+    }
+
+    public CoffeeTimeController() {
         borderPane = new BorderPane();
         logList = new ListView<>();
         borderPane.getChildren().add(logList);
+
+        configTable = new TableView<>();
+        configKeyCol = new TableColumn<>();
+        configValueCol = new TableColumn<>();
+//        configKeyCol.setCellValueFactory(features -> features.getValue().configKeyProperty());
+//        configValueCol.setCellValueFactory(features -> features.getValue().configValueProperty());
+        configKeyCol.setCellValueFactory(new PropertyValueFactory<>("configKey"));
+        configValueCol.setCellValueFactory(new PropertyValueFactory<>("configValue"));
+        configTable.getColumns().add(configKeyCol);
+        configTable.getColumns().add(configValueCol);
+
+        borderPane.getChildren().add(configTable);
+
+        fishing = new Fishing();
     }
 
     public void loadConfigButtonOnClicked() {
@@ -76,6 +99,10 @@ public class CoffeeTimeController implements Initializable {
                 ConfigUtil configUtil = new ConfigUtil(file);
                 fishing.loadProperties(configUtil);
                 Fishing.Properties pros = fishing.getProperties();
+
+
+                System.out.println(configTable.getItems().get(0));
+                logList.getItems().add(0, "load settings succeed.");
             } catch (Exception e) {
                 e.printStackTrace();
                 logList.getItems().add(0, "read settings failure.");
@@ -103,7 +130,4 @@ public class CoffeeTimeController implements Initializable {
         fishing.close();
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
 }
