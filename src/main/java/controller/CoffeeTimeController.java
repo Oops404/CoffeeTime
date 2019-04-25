@@ -18,7 +18,6 @@ import javafx.stage.Window;
 import util.ConfigUtil;
 import util.Fishing;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -52,6 +51,7 @@ public class CoffeeTimeController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         System.out.println("init");
+
         ObservableList<ConfigItem> list = FXCollections.observableArrayList();
         list.add(new ConfigItem("value", "123"));
 
@@ -67,10 +67,10 @@ public class CoffeeTimeController implements Initializable {
         configTable = new TableView<>();
         configKeyCol = new TableColumn<>();
         configValueCol = new TableColumn<>();
-//        configKeyCol.setCellValueFactory(features -> features.getValue().configKeyProperty());
-//        configValueCol.setCellValueFactory(features -> features.getValue().configValueProperty());
-        configKeyCol.setCellValueFactory(new PropertyValueFactory<>("configKey"));
-        configValueCol.setCellValueFactory(new PropertyValueFactory<>("configValue"));
+        configKeyCol.setCellValueFactory(features -> features.getValue().configKeyProperty());
+        configValueCol.setCellValueFactory(features -> features.getValue().configValueProperty());
+//        configKeyCol.setCellValueFactory(new PropertyValueFactory<>("configKey"));
+//        configValueCol.setCellValueFactory(new PropertyValueFactory<>("configValue"));
         configTable.getColumns().add(configKeyCol);
         configTable.getColumns().add(configValueCol);
 
