@@ -2,19 +2,12 @@ import bean.ConfigItem;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import util.ConfigUtil;
-
-import java.io.File;
 
 /**
  * @Author CheneyJin
@@ -28,13 +21,15 @@ public class TestTable extends Application {
     private TableColumn<ConfigItem, String> configValueCol;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         configTable = new TableView<>();
         configKeyCol = new TableColumn<>("Key");
         configValueCol = new TableColumn<>("Value");
 
         configKeyCol.setCellValueFactory(new PropertyValueFactory<>("configKey"));
         configValueCol.setCellValueFactory(new PropertyValueFactory<>("configValue"));
+//        configKeyCol.setCellValueFactory(features -> features.getValue().configKeyProperty());
+//        configValueCol.setCellValueFactory(features -> features.getValue().configValueProperty());
         configTable.getColumns().add(configKeyCol);
         configTable.getColumns().add(configValueCol);
         Scene scene = new Scene(new Group());
@@ -46,10 +41,10 @@ public class TestTable extends Application {
         primaryStage.show();
 
         ObservableList<ConfigItem> list = FXCollections.observableArrayList();
-        list.add(new ConfigItem("value", "123"));
+        list.add(new ConfigItem("value", 123));
 
         configTable.setItems(list);
-        configTable.getItems().add(new ConfigItem("value2", "1233"));
+        configTable.getItems().add(new ConfigItem("value2", 1233));
     }
 
     public static void main(String[] args) {

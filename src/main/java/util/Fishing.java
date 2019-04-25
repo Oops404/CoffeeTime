@@ -48,6 +48,26 @@ public class Fishing {
     private MouseHook mouseHook;
 
     public class Properties {
+        public static final String LH = "lh";
+        public static final String LS = "ls";
+        public static final String LV = "lv";
+        public static final String HH = "hh";
+        public static final String HS = "hs";
+        public static final String HV = "hv";
+        public static final String GET_FISH_ALIGN_X = "getFishAlignX";
+        public static final String GET_FISH_ALIGN_Y = "getFishAlignY";
+        public static final String MASK_DEBUG = "maskDebug";
+        public static final String CATCH_DEBUG = "catchDebug";
+        public static final String LOAD_BAR_DEBUG = "loadBarDebug";
+        public static final String SPRAY_AREA_DEBUG = "sprayAreaDebug";
+        public static final String LOAD_BAR_X = "loadBarX";
+        public static final String LOAD_BAR_Y = "loadBarY";
+        public static final String SPRAY_STEP = "sprayStep";
+        public static final String TARGET_THRESHOLD = "targetThreshold";
+        public static final String TARGET_ALIGN_X = "targetAlignX";
+        public static final String TARGET_ALIGN_Y = "targetAlignY";
+        public static final String TARGET_SIZE = "targetSize";
+
         public int lh, ls, lv, hh, hs, hv;
         public int getFishAlignX, getFishAlignY;
         public boolean maskDebug, catchDebug, loadBarDebug, sprayAreaDebug;
@@ -58,7 +78,7 @@ public class Fishing {
         return pros;
     }
 
-    public Fishing(){
+    public Fishing() {
         initController();
     }
 
@@ -103,7 +123,7 @@ public class Fishing {
         pros.sprayAreaDebug = configUtil.getValueBool("sprayAreaDebug", true);
     }
 
-    private void initController(){
+    private void initController() {
         mouseHook = new MouseHook();
         try {
             robot = new MouseCorrectRobot();

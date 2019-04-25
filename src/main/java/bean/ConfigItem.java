@@ -10,11 +10,11 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class ConfigItem {
     private SimpleStringProperty configKey;
-    private SimpleStringProperty  configValue;
+    private SimpleIntegerProperty  configValue;
 
-    public ConfigItem(String configKey, String configValue) {
+    public ConfigItem(String configKey, int configValue) {
         this.configKey = new SimpleStringProperty(configKey);
-        this.configValue = new SimpleStringProperty(configValue);
+        this.configValue = new SimpleIntegerProperty(configValue);
     }
 
     public String getConfigKey() {
@@ -29,15 +29,15 @@ public class ConfigItem {
         this.configKey.set(configKey);
     }
 
-    public String getConfigValue() {
+    public int getConfigValue() {
         return configValue.get();
     }
 
-    public SimpleStringProperty configValueProperty() {
+    public SimpleIntegerProperty configValueProperty() {
         return configValue;
     }
 
-    public void setConfigValue(String configValue) {
+    public void setConfigValue(int configValue) {
         this.configValue.set(configValue);
     }
 

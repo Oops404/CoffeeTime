@@ -89,4 +89,8 @@ public class ConfigUtil implements AutoCloseable {
         }
         return true;
     }
+
+    public static int bool2Int(boolean bool) {
+        return bool ? 1 : 0;
+    }
 }

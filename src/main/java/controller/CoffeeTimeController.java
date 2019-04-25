@@ -11,6 +11,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -32,6 +33,8 @@ public class CoffeeTimeController implements Initializable {
     @FXML
     private BorderPane borderPane;
     @FXML
+    private AnchorPane anchorPane;
+    @FXML
     private Button loadConfigButton;
     @FXML
     private Button saveConfigButton;
@@ -47,34 +50,32 @@ public class CoffeeTimeController implements Initializable {
     private ListView<String> logList;
 
     private Fishing fishing;
+    private ObservableList<ConfigItem> propsList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("init");
-
-        ObservableList<ConfigItem> list = FXCollections.observableArrayList();
-        list.add(new ConfigItem("value", "123"));
-
-        configTable.setItems(list);
-        configTable.getItems().add(new ConfigItem("value2", "1233"));
+        System.out.println("initialize");
+        configKeyCol.setCellValueFactory(new PropertyValueFactory<>("configKey"));
+        configValueCol.setCellValueFactory(new PropertyValueFactory<>("configValue"));
+        propsList = FXCollections.observableArrayList();
+        configTable.setItems(propsList);
     }
 
     public CoffeeTimeController() {
+        System.out.println("Constructor");
         borderPane = new BorderPane();
+        anchorPane = new AnchorPane();
         logList = new ListView<>();
         borderPane.getChildren().add(logList);
+        borderPane.getChildren().add(anchorPane);
 
         configTable = new TableView<>();
         configKeyCol = new TableColumn<>();
         configValueCol = new TableColumn<>();
-        configKeyCol.setCellValueFactory(features -> features.getValue().configKeyProperty());
-        configValueCol.setCellValueFactory(features -> features.getValue().configValueProperty());
-//        configKeyCol.setCellValueFactory(new PropertyValueFactory<>("configKey"));
-//        configValueCol.setCellValueFactory(new PropertyValueFactory<>("configValue"));
         configTable.getColumns().add(configKeyCol);
         configTable.getColumns().add(configValueCol);
 
-        borderPane.getChildren().add(configTable);
+        anchorPane.getChildren().add(configTable);
 
         fishing = new Fishing();
     }
@@ -100,8 +101,27 @@ public class CoffeeTimeController implements Initializable {
                 fishing.loadProperties(configUtil);
                 Fishing.Properties pros = fishing.getProperties();
 
+                propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_X, pros.loadBarX));
+                propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_Y, pros.loadBarY));
+                propsList.add(new ConfigItem(Fishing.Properties.SPRAY_STEP, pros.sprayStep));
+                propsList.add(new ConfigItem(Fishing.Properties.TARGET_THRESHOLD, pros.targetThreshold));
+                propsList.add(new ConfigItem(Fishing.Properties.TARGET_ALIGN_X, pros.targetAlignX));
+                propsList.add(new ConfigItem(Fishing.Properties.TARGET_ALIGN_Y, pros.targetAlignY));
+                propsList.add(new ConfigItem(Fishing.Properties.TARGET_SIZE, pros.targetSize));
 
-                System.out.println(configTable.getItems().get(0));
+                propsList.add(new ConfigItem(Fishing.Properties.LH, pros.lh));
+                propsList.add(new ConfigItem(Fishing.Properties.LS, pros.ls));
+                propsList.add(new ConfigItem(Fishing.Properties.LV, pros.lv));
+                propsList.add(new ConfigItem(Fishing.Properties.HH, pros.hh));
+                propsList.add(new ConfigItem(Fishing.Properties.HS, pros.hs));
+                propsList.add(new ConfigItem(Fishing.Properties.HV, pros.hv));
+                propsList.add(new ConfigItem(Fishing.Properties.GET_FISH_ALIGN_X, pros.getFishAlignX));
+                propsList.add(new ConfigItem(Fishing.Properties.GET_FISH_ALIGN_Y, pros.getFishAlignY));
+                propsList.add(new ConfigItem(Fishing.Properties.MASK_DEBUG, ConfigUtil.bool2Int(pros.maskDebug)));
+                propsList.add(new ConfigItem(Fishing.Properties.CATCH_DEBUG, ConfigUtil.bool2Int(pros.catchDebug)));
+                propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_DEBUG, ConfigUtil.bool2Int(pros.loadBarDebug)));
+                propsList.add(new ConfigItem(Fishing.Properties.SPRAY_AREA_DEBUG, ConfigUtil.bool2Int(pros.sprayAreaDebug)));
+                
                 logList.getItems().add(0, "load settings succeed.");
             } catch (Exception e) {
                 e.printStackTrace();
