@@ -6,16 +6,15 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.converter.IntegerStringConverter;
 import util.ConfigUtil;
 import util.Fishing;
 
@@ -45,7 +44,7 @@ public class CoffeeTimeController implements Initializable {
     @FXML
     private TableColumn<ConfigItem, String> configKeyCol;
     @FXML
-    private TableColumn<ConfigItem, String> configValueCol;
+    private TableColumn<ConfigItem, Integer> configValueCol;
     @FXML
     private ListView<String> logList;
 
@@ -57,6 +56,8 @@ public class CoffeeTimeController implements Initializable {
         System.out.println("initialize");
         configKeyCol.setCellValueFactory(new PropertyValueFactory<>("configKey"));
         configValueCol.setCellValueFactory(new PropertyValueFactory<>("configValue"));
+        configValueCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+
         propsList = FXCollections.observableArrayList();
         configTable.setItems(propsList);
     }
@@ -74,7 +75,7 @@ public class CoffeeTimeController implements Initializable {
         configValueCol = new TableColumn<>();
         configTable.getColumns().add(configKeyCol);
         configTable.getColumns().add(configValueCol);
-
+        configTable.setEditable(true);
         anchorPane.getChildren().add(configTable);
 
         fishing = new Fishing();
@@ -121,7 +122,7 @@ public class CoffeeTimeController implements Initializable {
                 propsList.add(new ConfigItem(Fishing.Properties.CATCH_DEBUG, ConfigUtil.bool2Int(pros.catchDebug)));
                 propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_DEBUG, ConfigUtil.bool2Int(pros.loadBarDebug)));
                 propsList.add(new ConfigItem(Fishing.Properties.SPRAY_AREA_DEBUG, ConfigUtil.bool2Int(pros.sprayAreaDebug)));
-                
+
                 logList.getItems().add(0, "load settings succeed.");
             } catch (Exception e) {
                 e.printStackTrace();
