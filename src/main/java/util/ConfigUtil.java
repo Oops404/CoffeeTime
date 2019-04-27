@@ -1,6 +1,7 @@
 package util;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.Properties;
 
 /**
@@ -72,6 +73,16 @@ public class ConfigUtil implements AutoCloseable {
         }
         System.out.println(key + " value is: " + result);
         return result;
+    }
+
+    public static void changeAttribute(Fishing.Properties props, String propName, int newValue) {
+        Class cls = props.getClass();
+        try {
+            Field field = cls.getDeclaredField(propName);
+            field.set(props, newValue);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

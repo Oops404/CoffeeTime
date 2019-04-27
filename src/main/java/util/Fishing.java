@@ -22,6 +22,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
@@ -72,6 +74,31 @@ public class Fishing {
         public int getFishAlignX, getFishAlignY;
         public boolean maskDebug, catchDebug, loadBarDebug, sprayAreaDebug;
         public int loadBarX, loadBarY, sprayStep, targetThreshold, targetAlignX, targetAlignY, targetSize;
+
+        @Override
+        public String toString() {
+            return "Properties{" +
+                    "lh=" + lh +
+                    ", ls=" + ls +
+                    ", lv=" + lv +
+                    ", hh=" + hh +
+                    ", hs=" + hs +
+                    ", hv=" + hv +
+                    ", getFishAlignX=" + getFishAlignX +
+                    ", getFishAlignY=" + getFishAlignY +
+                    ", maskDebug=" + maskDebug +
+                    ", catchDebug=" + catchDebug +
+                    ", loadBarDebug=" + loadBarDebug +
+                    ", sprayAreaDebug=" + sprayAreaDebug +
+                    ", loadBarX=" + loadBarX +
+                    ", loadBarY=" + loadBarY +
+                    ", sprayStep=" + sprayStep +
+                    ", targetThreshold=" + targetThreshold +
+                    ", targetAlignX=" + targetAlignX +
+                    ", targetAlignY=" + targetAlignY +
+                    ", targetSize=" + targetSize +
+                    '}';
+        }
     }
 
     public Properties getProperties() {
@@ -95,32 +122,32 @@ public class Fishing {
     }
 
     public void loadProperties(ConfigUtil configUtil) {
-        pros.loadBarX = configUtil.getValue("loadBarX", 860);
-        pros.loadBarY = configUtil.getValue("loadBarY", 875);
-        pros.sprayStep = configUtil.getValue("sprayStep", 921);
-        pros.targetThreshold = configUtil.getValue("targetThreshold", 20);
+        pros.loadBarX = configUtil.getValue(Properties.LOAD_BAR_X, 860);
+        pros.loadBarY = configUtil.getValue(Properties.LOAD_BAR_Y, 875);
+        pros.sprayStep = configUtil.getValue(Properties.SPRAY_STEP, 921);
+        pros.targetThreshold = configUtil.getValue(Properties.TARGET_THRESHOLD, 20);
 
-        pros.targetAlignX = configUtil.getValue("targetAlignX", 0);
-        pros.targetAlignY = configUtil.getValue("targetAlignY", 0);
-        pros.targetSize = configUtil.getValue("targetSize", 55);
+        pros.targetAlignX = configUtil.getValue(Properties.TARGET_ALIGN_X, 0);
+        pros.targetAlignY = configUtil.getValue(Properties.TARGET_ALIGN_Y, 0);
+        pros.targetSize = configUtil.getValue(Properties.TARGET_SIZE, 55);
 
-        pros.getFishAlignX = configUtil.getValue("getFishAlignX", 5);
-        pros.getFishAlignY = configUtil.getValue("getFishAlignY", 0);
+        pros.getFishAlignX = configUtil.getValue(Properties.GET_FISH_ALIGN_X, 5);
+        pros.getFishAlignY = configUtil.getValue(Properties.GET_FISH_ALIGN_Y, 0);
 
-        pros.lh = configUtil.getValue("lh", 35);
-        pros.ls = configUtil.getValue("ls", 110);
-        pros.lv = configUtil.getValue("lv", 110);
+        pros.lh = configUtil.getValue(Properties.LH, 35);
+        pros.ls = configUtil.getValue(Properties.LS, 110);
+        pros.lv = configUtil.getValue(Properties.LV, 110);
         lower_red = new Scalar(pros.lh, pros.ls, pros.lv);
 
-        pros.hh = configUtil.getValue("hh", 119);
-        pros.hs = configUtil.getValue("hs", 255);
-        pros.hv = configUtil.getValue("hv", 255);
+        pros.hh = configUtil.getValue(Properties.HH, 119);
+        pros.hs = configUtil.getValue(Properties.HS, 255);
+        pros.hv = configUtil.getValue(Properties.HV, 255);
         upper_red = new Scalar(pros.hh, pros.hs, pros.hv);
 
-        pros.maskDebug = configUtil.getValueBool("maskDebug", true);
-        pros.catchDebug = configUtil.getValueBool("catchDebug", true);
-        pros.loadBarDebug = configUtil.getValueBool("loadBarDebug", true);
-        pros.sprayAreaDebug = configUtil.getValueBool("sprayAreaDebug", true);
+        pros.maskDebug = configUtil.getValueBool(Properties.MASK_DEBUG, true);
+        pros.catchDebug = configUtil.getValueBool(Properties.CATCH_DEBUG, true);
+        pros.loadBarDebug = configUtil.getValueBool(Properties.LOAD_BAR_DEBUG, true);
+        pros.sprayAreaDebug = configUtil.getValueBool(Properties.SPRAY_AREA_DEBUG, true);
     }
 
     private void initController() {

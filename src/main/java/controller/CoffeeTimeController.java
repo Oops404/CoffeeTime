@@ -86,6 +86,12 @@ public class CoffeeTimeController implements Initializable {
                     int newValue = event.getNewValue();
                     ConfigItem item = event.getTableView().getItems().get(event.getTablePosition().getRow());
                     item.setConfigValue(newValue);
+                    ConfigUtil.changeAttribute(fishing.getProperties(), item.getConfigKey(), item.getConfigValue());
+                    System.out.println("change ConfigItem in list: " +
+                            event.getTableView().getItems().get(event.getTablePosition().getRow()));
+                    System.out.println("update fishing props turn to: " + fishing.getProperties());
+                    logList.getItems().add(0, "update props " + item.getConfigKey()
+                            + "'s value to " + item.getConfigValue() + ".");
                 }
         );
         propsList = FXCollections.observableArrayList();
