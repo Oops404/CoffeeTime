@@ -10,7 +10,7 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class ConfigItem {
     private SimpleStringProperty configKey;
-    private SimpleIntegerProperty  configValue;
+    private SimpleIntegerProperty configValue;
 
     public ConfigItem(String configKey, int configValue) {
         this.configKey = new SimpleStringProperty(configKey);
@@ -43,9 +43,6 @@ public class ConfigItem {
 
     @Override
     public String toString() {
-        return "ConfigItem{" +
-                "configKey=" + configKey +
-                ", configValue=" + configValue +
-                '}';
+        return configKey.get() + "=" + configValue.get() + "\r\n";
     }
 }
