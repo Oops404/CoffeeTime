@@ -60,10 +60,10 @@ public class Diablo3Crusader {
 
     private GameAction gameAction = new GameAction(robot);
 
-//    public static void main(String[] args) {
-//        Diablo3Crusader ct = new Diablo3Crusader();
-//        ct.auto();
-//    }
+    public static void main(String[] args) {
+        Diablo3Crusader ct = new Diablo3Crusader();
+        ct.auto();
+    }
 
     private boolean findD3HWND() {
         WinDef.HWND hwnd = User32.INSTANCE.FindWindow(null, "暗黑破壞神III");

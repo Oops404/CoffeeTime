@@ -79,7 +79,11 @@ public class ConfigUtil implements AutoCloseable {
         Class cls = props.getClass();
         try {
             Field field = cls.getDeclaredField(propName);
-            field.set(props, newValue);
+            if (field.getGenericType().equals(boolean.class)) {
+                field.set(props, int2Bool(newValue));
+            } else {
+                field.set(props, newValue);
+            }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -103,5 +107,9 @@ public class ConfigUtil implements AutoCloseable {
 
     public static int bool2Int(boolean bool) {
         return bool ? 1 : 0;
+    }
+
+    public static boolean int2Bool(int integer) {
+        return integer > 0;
     }
 }
