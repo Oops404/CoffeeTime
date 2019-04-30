@@ -248,7 +248,7 @@ public class Fishing {
 
     private boolean detectLoadingBar() {
         BufferedImage fishingLoadingBar = robot.createScreenCapture(new Rectangle(
-                pros.loadBarX, pros.loadBarY, 2, 2));
+                pros.loadBarX, pros.loadBarY, 10, 10));
         try (CTMat loadingBar = new CTMat(bufferedImage2Mat(fishingLoadingBar), "loadingBar")) {
             double[] pixel = loadingBar.getMat().get(0, 0);
             if (pros.loadBarDebug) {

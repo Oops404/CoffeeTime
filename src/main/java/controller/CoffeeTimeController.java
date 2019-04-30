@@ -22,10 +22,9 @@ import util.ConfigUtil;
 import util.FileUtil;
 import util.Fishing;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 
@@ -193,7 +192,8 @@ public class CoffeeTimeController implements Initializable {
             logList.getItems().add(0, "no settings file saved.");
             return;
         }
-        try (FileWriter fileWriter = new FileWriter(file, true)) {
+        try (BufferedWriter fileWriter = new BufferedWriter (
+                new OutputStreamWriter(new FileOutputStream (file,false), StandardCharsets.UTF_8))) {
             for (ConfigItem item : propsList) {
                 fileWriter.write(item.toString());
             }
