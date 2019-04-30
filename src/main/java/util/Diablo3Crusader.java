@@ -156,7 +156,7 @@ public class Diablo3Crusader {
                     return lib.CallNextHookEx(null, nCode, wParam, lParam.getPointer());
                 }
             });
-            mouseHook.startWindowsHookEx();
+            mouseHook.startWindowsHookExWithOutUI();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -201,8 +201,8 @@ public class Fishing {
         public void run() {
             try {
                 //noinspection InfiniteLoopStatement
-                while (!close) {
-                    if (start) {
+                while (true) {
+                    if (start && !close) {
                         usingFishingSkill();
                         resetMousePoint();
                         Target target = detectFishingLine(robot);

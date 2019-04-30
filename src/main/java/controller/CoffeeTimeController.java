@@ -44,6 +44,8 @@ public class CoffeeTimeController implements Initializable {
     @FXML
     private Button saveConfigButton;
     @FXML
+    private Button startButton;
+    @FXML
     private Button guideButton;
     @FXML
     private TableView<ConfigItem> configTable;
@@ -175,7 +177,6 @@ public class CoffeeTimeController implements Initializable {
                     configUtil.getAnnotation(Fishing.Properties.LOAD_BAR_DEBUG)));
             propsList.add(new ConfigItem(Fishing.Properties.SPRAY_AREA_DEBUG, ConfigUtil.bool2Int(pros.sprayAreaDebug),
                     configUtil.getAnnotation(Fishing.Properties.SPRAY_AREA_DEBUG)));
-
             logList.getItems().add(0, "load settings succeed.");
         } catch (Exception e) {
             e.printStackTrace();
@@ -205,9 +206,8 @@ public class CoffeeTimeController implements Initializable {
     }
 
     public void guideButtonOnClicked() {
-        logList.getItems().add(0, "version: 0.1.beta");
+        logList.getItems().add(0, "version: 0.2.beta");
         logList.getItems().add(0, "羊羊羊(oﾟvﾟ)ノ");
-        System.out.println("guide");
     }
 
     public void actionStart() {

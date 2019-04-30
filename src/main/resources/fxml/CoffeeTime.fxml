@@ -17,6 +17,7 @@
         <ToolBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <Button fx:id="loadConfigButton" mnemonicParsing="false" onAction="#loadConfigButtonOnClicked" text="选择配置"/>
             <Button fx:id="saveConfigButton" mnemonicParsing="false" onAction="#saveConfigButtonOnClicked" text="保存配置"/>
+            <Button fx:id="startButton" onAction="#actionStart" mnemonicParsing="false" text="开启"/>
             <Button fx:id="guideButton" mnemonicParsing="false" onAction="#guideButtonOnClicked" text="说明"/>
             <BorderPane.margin>
                 <Insets/>

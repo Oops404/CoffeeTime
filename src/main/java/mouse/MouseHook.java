@@ -34,13 +34,13 @@ public class MouseHook {
         this.mouseHook.lib = lib;
     }
 
-//    public void startWindowsHookEx() {
-//        if (isWindows) {
-//            hHook = lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHook, hMod, 0);
-//        }
-//    }
-
     public void startWindowsHookEx() {
+        if (isWindows) {
+            hHook = lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHook, hMod, 0);
+        }
+    }
+
+    public void startWindowsHookExWithOutUI() {
         if (isWindows) {
             lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHook, hMod, 0);
             int result;
