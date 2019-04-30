@@ -11,10 +11,18 @@ import javafx.beans.property.SimpleStringProperty;
 public class ConfigItem {
     private SimpleStringProperty configKey;
     private SimpleIntegerProperty configValue;
+    private SimpleStringProperty configNote;
+
+    public ConfigItem(String configKey, int configValue, String configNote) {
+        this.configKey = new SimpleStringProperty(configKey);
+        this.configValue = new SimpleIntegerProperty(configValue);
+        this.configNote = new SimpleStringProperty(configNote);
+    }
 
     public ConfigItem(String configKey, int configValue) {
         this.configKey = new SimpleStringProperty(configKey);
         this.configValue = new SimpleIntegerProperty(configValue);
+        this.configNote = new SimpleStringProperty("");
     }
 
     public String getConfigKey() {
@@ -41,8 +49,27 @@ public class ConfigItem {
         this.configValue.set(configValue);
     }
 
+    public String getConfigNote() {
+        return configNote.get();
+    }
+
+    public SimpleStringProperty configNoteProperty() {
+        return configNote;
+    }
+
+    public void setConfigNote(String configNote) {
+        this.configNote.set(configNote);
+    }
+
     @Override
     public String toString() {
-        return configKey.get() + "=" + configValue.get() + "\r\n";
+        String noteValue = configNote.get();
+        String annotation = "# " + noteValue + "\r\n";
+        String prop = configKey.get() + "=" + configValue.get() + "\r\n";
+        if ("".equals(noteValue)) {
+            return prop;
+        } else {
+            return annotation + prop;
+        }
     }
 }

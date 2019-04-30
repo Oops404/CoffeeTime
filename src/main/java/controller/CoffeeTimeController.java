@@ -52,6 +52,8 @@ public class CoffeeTimeController implements Initializable {
     @FXML
     private TableColumn<ConfigItem, Integer> configValueCol;
     @FXML
+    private TableColumn<ConfigItem, String> configNoteCol;
+    @FXML
     private ListView<String> logList;
 
     private Fishing fishing;
@@ -68,8 +70,10 @@ public class CoffeeTimeController implements Initializable {
         configTable = new TableView<>();
         configKeyCol = new TableColumn<>();
         configValueCol = new TableColumn<>();
+        configNoteCol = new TableColumn<>();
         configTable.getColumns().add(configKeyCol);
         configTable.getColumns().add(configValueCol);
+        configTable.getColumns().add(configNoteCol);
         configTable.setEditable(true);
         anchorPane.getChildren().add(configTable);
 
@@ -81,6 +85,8 @@ public class CoffeeTimeController implements Initializable {
         System.out.println("initialize");
         configKeyCol.setCellValueFactory(new PropertyValueFactory<>("configKey"));
         configValueCol.setCellValueFactory(new PropertyValueFactory<>("configValue"));
+        configNoteCol.setCellValueFactory(new PropertyValueFactory<>("configNote"));
+
         configValueCol.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         configValueCol.setOnEditCommit(
                 event -> {
@@ -95,8 +101,22 @@ public class CoffeeTimeController implements Initializable {
                             + "'s value to " + item.getConfigValue() + ".");
                 }
         );
+        configNoteCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        configNoteCol.setOnEditCommit(
+                event -> {
+                    String newValue = event.getNewValue();
+                    System.out.println(newValue);
+                    if (null != newValue && !"".equals(newValue)) {
+                        ConfigItem item = event.getTableView().getItems().get(event.getTablePosition().getRow());
+                        item.setConfigNote(newValue);
+                        logList.getItems().add(0,
+                                "update " + item.getConfigKey() + "'s note: " + newValue + ". ");
+                    }
+                }
+        );
         propsList = FXCollections.observableArrayList();
         configTable.setItems(propsList);
+
     }
 
     public void loadConfigButtonOnClicked() {
@@ -116,26 +136,45 @@ public class CoffeeTimeController implements Initializable {
             if (propsList.size() > 0) {
                 propsList.clear();
             }
-            propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_X, pros.loadBarX));
-            propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_Y, pros.loadBarY));
-            propsList.add(new ConfigItem(Fishing.Properties.SPRAY_STEP, pros.sprayStep));
-            propsList.add(new ConfigItem(Fishing.Properties.TARGET_THRESHOLD, pros.targetThreshold));
-            propsList.add(new ConfigItem(Fishing.Properties.TARGET_ALIGN_X, pros.targetAlignX));
-            propsList.add(new ConfigItem(Fishing.Properties.TARGET_ALIGN_Y, pros.targetAlignY));
-            propsList.add(new ConfigItem(Fishing.Properties.TARGET_SIZE, pros.targetSize));
+            propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_X, pros.loadBarX,
+                    configUtil.getAnnotation(Fishing.Properties.LOAD_BAR_X)));
+            propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_Y, pros.loadBarY,
+                    configUtil.getAnnotation(Fishing.Properties.LOAD_BAR_Y)));
+            propsList.add(new ConfigItem(Fishing.Properties.SPRAY_STEP, pros.sprayStep,
+                    configUtil.getAnnotation(Fishing.Properties.SPRAY_STEP)));
+            propsList.add(new ConfigItem(Fishing.Properties.TARGET_THRESHOLD, pros.targetThreshold,
+                    configUtil.getAnnotation(Fishing.Properties.TARGET_THRESHOLD)));
+            propsList.add(new ConfigItem(Fishing.Properties.TARGET_ALIGN_X, pros.targetAlignX,
+                    configUtil.getAnnotation(Fishing.Properties.TARGET_ALIGN_X)));
+            propsList.add(new ConfigItem(Fishing.Properties.TARGET_ALIGN_Y, pros.targetAlignY,
+                    configUtil.getAnnotation(Fishing.Properties.TARGET_ALIGN_Y)));
+            propsList.add(new ConfigItem(Fishing.Properties.TARGET_SIZE, pros.targetSize,
+                    configUtil.getAnnotation(Fishing.Properties.TARGET_SIZE)));
 
-            propsList.add(new ConfigItem(Fishing.Properties.LH, pros.lh));
-            propsList.add(new ConfigItem(Fishing.Properties.LS, pros.ls));
-            propsList.add(new ConfigItem(Fishing.Properties.LV, pros.lv));
-            propsList.add(new ConfigItem(Fishing.Properties.HH, pros.hh));
-            propsList.add(new ConfigItem(Fishing.Properties.HS, pros.hs));
-            propsList.add(new ConfigItem(Fishing.Properties.HV, pros.hv));
-            propsList.add(new ConfigItem(Fishing.Properties.GET_FISH_ALIGN_X, pros.getFishAlignX));
-            propsList.add(new ConfigItem(Fishing.Properties.GET_FISH_ALIGN_Y, pros.getFishAlignY));
-            propsList.add(new ConfigItem(Fishing.Properties.MASK_DEBUG, ConfigUtil.bool2Int(pros.maskDebug)));
-            propsList.add(new ConfigItem(Fishing.Properties.CATCH_DEBUG, ConfigUtil.bool2Int(pros.catchDebug)));
-            propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_DEBUG, ConfigUtil.bool2Int(pros.loadBarDebug)));
-            propsList.add(new ConfigItem(Fishing.Properties.SPRAY_AREA_DEBUG, ConfigUtil.bool2Int(pros.sprayAreaDebug)));
+            propsList.add(new ConfigItem(Fishing.Properties.LH, pros.lh,
+                    configUtil.getAnnotation(Fishing.Properties.LH)));
+            propsList.add(new ConfigItem(Fishing.Properties.LS, pros.ls,
+                    configUtil.getAnnotation(Fishing.Properties.LS)));
+            propsList.add(new ConfigItem(Fishing.Properties.LV, pros.lv,
+                    configUtil.getAnnotation(Fishing.Properties.LV)));
+            propsList.add(new ConfigItem(Fishing.Properties.HH, pros.hh,
+                    configUtil.getAnnotation(Fishing.Properties.HH)));
+            propsList.add(new ConfigItem(Fishing.Properties.HS, pros.hs,
+                    configUtil.getAnnotation(Fishing.Properties.HS)));
+            propsList.add(new ConfigItem(Fishing.Properties.HV, pros.hv,
+                    configUtil.getAnnotation(Fishing.Properties.HV)));
+            propsList.add(new ConfigItem(Fishing.Properties.GET_FISH_ALIGN_X, pros.getFishAlignX,
+                    configUtil.getAnnotation(Fishing.Properties.GET_FISH_ALIGN_X)));
+            propsList.add(new ConfigItem(Fishing.Properties.GET_FISH_ALIGN_Y, pros.getFishAlignY,
+                    configUtil.getAnnotation(Fishing.Properties.GET_FISH_ALIGN_Y)));
+            propsList.add(new ConfigItem(Fishing.Properties.MASK_DEBUG, ConfigUtil.bool2Int(pros.maskDebug),
+                    configUtil.getAnnotation(Fishing.Properties.MASK_DEBUG)));
+            propsList.add(new ConfigItem(Fishing.Properties.CATCH_DEBUG, ConfigUtil.bool2Int(pros.catchDebug),
+                    configUtil.getAnnotation(Fishing.Properties.CATCH_DEBUG)));
+            propsList.add(new ConfigItem(Fishing.Properties.LOAD_BAR_DEBUG, ConfigUtil.bool2Int(pros.loadBarDebug),
+                    configUtil.getAnnotation(Fishing.Properties.LOAD_BAR_DEBUG)));
+            propsList.add(new ConfigItem(Fishing.Properties.SPRAY_AREA_DEBUG, ConfigUtil.bool2Int(pros.sprayAreaDebug),
+                    configUtil.getAnnotation(Fishing.Properties.SPRAY_AREA_DEBUG)));
 
             logList.getItems().add(0, "load settings succeed.");
         } catch (Exception e) {
@@ -158,13 +197,16 @@ public class CoffeeTimeController implements Initializable {
                 fileWriter.write(item.toString());
             }
             fileWriter.flush();
+            logList.getItems().add(0, "save settings succeed.");
         } catch (IOException e) {
             e.printStackTrace();
-            logList.getItems().add("save settings file failure.");
+            logList.getItems().add(0, "save settings failure.");
         }
     }
 
     public void guideButtonOnClicked() {
+        logList.getItems().add(0, "version: 0.1.beta");
+        logList.getItems().add(0, "羊羊羊(oﾟvﾟ)ノ");
         System.out.println("guide");
     }
 

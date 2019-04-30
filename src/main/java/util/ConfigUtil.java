@@ -2,6 +2,9 @@ package util;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -9,10 +12,10 @@ import java.util.Properties;
  * @Time 2019-01-14-13:23
  * @Email cheneyjin@outlook.com
  */
-public class ConfigUtil implements AutoCloseable {
+public class ConfigUtil {
 
-    private InputStream fis;
     private Properties properties = new Properties();
+    private List<String> text = new ArrayList<>();
 
     public ConfigUtil() throws Exception {
         if (!exist()) {
@@ -31,9 +34,9 @@ public class ConfigUtil implements AutoCloseable {
     }
 
     private boolean exist(File file) {
-        try {
-            fis = new BufferedInputStream(new FileInputStream(file));
+        try (InputStream fis = new BufferedInputStream(new FileInputStream(file))) {
             properties.load(fis);
+            loadText(file);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,14 +45,27 @@ public class ConfigUtil implements AutoCloseable {
     }
 
     private boolean exist() {
-        try {
-            fis = new BufferedInputStream(
-                    new FileInputStream(root() + "/" + "settings.ini"));
+        File file = new File(root() + "/" + "settings.ini");
+        try (InputStream fis = new BufferedInputStream(
+                new FileInputStream(file))) {
             properties.load(fis);
+            loadText(file);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void loadText(File file) {
+        try (BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                text.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -89,11 +105,18 @@ public class ConfigUtil implements AutoCloseable {
         }
     }
 
-    @Override
-    public void close() throws Exception {
-        if (fis != null) {
-            fis.close();
+    public String getAnnotation(String key) {
+        int len = text.size();
+        for (int i = 0; i < len; i++) {
+            if (text.get(i).contains(key) && i != 0) {
+                String line = text.get(i - 1);
+                int hasSharp = line.indexOf('#');
+                if (hasSharp >= 0) {
+                    return line.substring(hasSharp + 1);
+                }
+            }
         }
+        return "";
     }
 
     public static boolean isNumeric(String str) {
