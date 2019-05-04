@@ -1,4 +1,6 @@
+import controller.CoffeeTimeController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -21,6 +23,13 @@ public class CoffeeTime extends Application {
         primaryStage.setTitle("Coffee Time");
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/pics/fishing.png")));
         primaryStage.show();
+
+        primaryStage.setOnCloseRequest(event -> {
+            System.out.println("CoffeeTime closed.");
+            CoffeeTimeController.close();
+            primaryStage.close();
+            System.exit(0);
+        });
     }
 
     public static void main(String[] args) {

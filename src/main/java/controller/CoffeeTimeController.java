@@ -3,6 +3,7 @@ package controller;
 import bean.ConfigItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import javafx.util.converter.IntegerStringConverter;
 import util.ConfigUtil;
 import util.FileUtil;
@@ -57,8 +59,12 @@ public class CoffeeTimeController implements Initializable {
     @FXML
     private ListView<String> logList;
 
-    private Fishing fishing;
+    private static Fishing fishing;
     private ObservableList<ConfigItem> propsList;
+
+    public static void close() {
+        fishing.close();
+    }
 
     public CoffeeTimeController() {
         System.out.println("Constructor");
@@ -117,7 +123,6 @@ public class CoffeeTimeController implements Initializable {
         );
         propsList = FXCollections.observableArrayList();
         configTable.setItems(propsList);
-
     }
 
     public void loadConfigButtonOnClicked() {
@@ -192,8 +197,8 @@ public class CoffeeTimeController implements Initializable {
             logList.getItems().add(0, "no settings file saved.");
             return;
         }
-        try (BufferedWriter fileWriter = new BufferedWriter (
-                new OutputStreamWriter(new FileOutputStream (file,false), StandardCharsets.UTF_8))) {
+        try (BufferedWriter fileWriter = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(file, false), StandardCharsets.UTF_8))) {
             for (ConfigItem item : propsList) {
                 fileWriter.write(item.toString());
             }
@@ -206,7 +211,7 @@ public class CoffeeTimeController implements Initializable {
     }
 
     public void guideButtonOnClicked() {
-        logList.getItems().add(0, "version: 0.2.beta");
+        logList.getItems().add(0, "version: 0.3.beta");
         logList.getItems().add(0, "羊羊羊(oﾟvﾟ)ノ");
     }
 

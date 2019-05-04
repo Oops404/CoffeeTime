@@ -110,10 +110,14 @@ public class Fishing {
     }
 
     public void auto() {
-        close = false;
-        mouseControl();
-        Monitor monitor = new Monitor();
-        monitor.start();
+        if (close) {
+            mouseControl();
+            Monitor monitor = new Monitor();
+            monitor.start();
+            this.close = false;
+        }else {
+            System.out.println("monitor already start.");
+        }
     }
 
     public void close() {
@@ -249,6 +253,9 @@ public class Fishing {
     private boolean detectLoadingBar() {
         BufferedImage fishingLoadingBar = robot.createScreenCapture(new Rectangle(
                 pros.loadBarX, pros.loadBarY, 10, 10));
+
+//        BufferedImage fishingLoadingBar = JNAScreenShot.getScreenshot(new Rectangle(
+//                pros.loadBarX, pros.loadBarY, 10, 10));
         try (CTMat loadingBar = new CTMat(bufferedImage2Mat(fishingLoadingBar), "loadingBar")) {
             double[] pixel = loadingBar.getMat().get(0, 0);
             if (pros.loadBarDebug) {
@@ -266,6 +273,10 @@ public class Fishing {
         BufferedImage targetScape = robot.createScreenCapture(
                 new Rectangle(screenCutX + target.x + pros.targetAlignX, screenCutY + target.y + pros.targetAlignY,
                         pros.targetSize, pros.targetSize));
+
+//        BufferedImage targetScape = JNAScreenShot.getScreenshot(
+//                new Rectangle(screenCutX + target.x + pros.targetAlignX, screenCutY + target.y + pros.targetAlignY,
+//                        pros.targetSize, pros.targetSize));
         try (CTMat sprayArea = new CTMat(bufferedImage2Mat(targetScape), "sprayArea");
              CTMat graySprayArea = new CTMat(new Mat(), "graySprayArea")) {
             if (pros.sprayAreaDebug) {
@@ -304,6 +315,9 @@ public class Fishing {
         BufferedImage waterScape = robot.createScreenCapture(
                 new Rectangle(screenCutX, screenCutY, (int) (screenWidth * 0.35), (int) (screenHeight * 0.35))
         );
+////
+//        BufferedImage waterScape = JNAScreenShot.getScreenshot(
+//                new Rectangle(screenCutX, screenCutY, (int) (screenWidth * 0.35), (int) (screenHeight * 0.35)));
         try (CTMat scape = new CTMat(bufferedImage2Mat(waterScape), "scape");
              CTMat mask = new CTMat(new Mat(), "mask")) {
             Imgproc.cvtColor(scape.getMat(), scape.getMat(), Imgproc.COLOR_RGB2HSV);
