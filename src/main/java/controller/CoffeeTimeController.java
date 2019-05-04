@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javafx.util.converter.IntegerStringConverter;
+import sound.SoundPlayer;
+import sound.Tone;
 import util.ConfigUtil;
 import util.FileUtil;
 import util.Fishing;
@@ -49,6 +51,8 @@ public class CoffeeTimeController implements Initializable {
     @FXML
     private Button guideButton;
     @FXML
+    private Button googleGirl;
+    @FXML
     private TableView<ConfigItem> configTable;
     @FXML
     private TableColumn<ConfigItem, String> configKeyCol;
@@ -61,6 +65,10 @@ public class CoffeeTimeController implements Initializable {
 
     private static Fishing fishing;
     private ObservableList<ConfigItem> propsList;
+
+    private byte[] soundGuide = new Tone("mp3/guide.mp3").getMusic();
+    private byte[] googleGirlShutup = new Tone("mp3/shut_up.mp3").getMusic();
+    private byte[] googleGirlSpeak = new Tone("mp3/speak.mp3").getMusic();
 
     public static void close() {
         fishing.close();
@@ -211,11 +219,12 @@ public class CoffeeTimeController implements Initializable {
     }
 
     public void guideButtonOnClicked() {
-        logList.getItems().add(0, "[迭代版本 0.4Version] 羊羊羊(oﾟvﾟ)ノ省电教程:");
-        logList.getItems().add( "1. 魔兽世界画面设置,全部低，但保留水体细节（普通/优良），粒子密度（最高），轮廓线（高）。");
-        logList.getItems().add( "2. 魔兽世界画面高级设置,限制前台帧数（60），后台帧数（50）。");
-        logList.getItems().add( "3. 关闭电脑所有不必要的软件和后台程序（实在不能关闭的请最小化），只保留魔兽世界。");
-        logList.getItems().add( "4. 关闭电脑显示器，音箱，键盘鼠标...只需要保证网络稳定且主机工作即可。");
+        new SoundPlayer(soundGuide).start();
+        logList.getItems().add(0, "4. 关闭电脑显示器，音箱，键盘鼠标...只需要保证网络稳定且主机工作即可。");
+        logList.getItems().add(0, "3. 关闭电脑所有不必要的软件和后台程序（实在不能关闭的请最小化），只保留魔兽世界。");
+        logList.getItems().add(0, "2. 魔兽世界画面高级设置,限制前台帧数（60），后台帧数（50）。");
+        logList.getItems().add(0, "1. 魔兽世界画面设置,全部低，但保留水体细节（普通/优良），粒子密度（最高），轮廓线（高）。");
+        logList.getItems().add(0, "[迭代版本 0.4Version] 羊羊羊(oﾟvﾟ)ノ省电教程↓:");
 
     }
 
@@ -224,9 +233,15 @@ public class CoffeeTimeController implements Initializable {
         fishing.auto();
     }
 
-    public void actionStop() {
-        logList.getItems().add(0, "stop fishing monitor.");
-        fishing.close();
+    public void googleGirlOral() {
+        Fishing.isOralable = !Fishing.isOralable;
+        if (Fishing.isOralable) {
+            new SoundPlayer(googleGirlSpeak).start();
+            googleGirl.setText("闭嘴谷歌娘");
+        } else {
+            new SoundPlayer(googleGirlShutup).start();
+            googleGirl.setText("张嘴谷歌娘");
+        }
     }
 
     private Stage appStage() {

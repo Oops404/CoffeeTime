@@ -13,7 +13,7 @@ public class Tone {
     private byte[] musicBytes;
     private static Tone instance;
 
-    private Tone(String musicPath) {
+    public Tone(String musicPath) {
         try (InputStream musicStream = this.getClass()
                 .getClassLoader().getResourceAsStream(musicPath)) { //"mp3/tone.mp3"
             musicBytes = input2byte(musicStream);
@@ -22,16 +22,16 @@ public class Tone {
         }
     }
 
-    public static Tone getInstance(String musicPath) {
-        if (instance == null) {
-            synchronized (Tone.class) {
-                if (instance == null) {
-                    instance = new Tone(musicPath);
-                }
-            }
-        }
-        return instance;
-    }
+//    public static Tone getInstance(String musicPath) {
+//        if (instance == null) {
+//            synchronized (Tone.class) {
+//                if (instance == null) {
+//                    instance = new Tone(musicPath);
+//                }
+//            }
+//        }
+//        return instance;
+//    }
 
     public byte[] getMusic() {
         return musicBytes.clone();

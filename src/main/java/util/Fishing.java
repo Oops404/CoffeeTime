@@ -16,6 +16,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import sound.SoundPlayer;
+import sound.Tone;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -48,6 +49,12 @@ public class Fishing {
 
     private boolean close = false;
     private MouseHook mouseHook;
+
+    private byte[] soundTone = new Tone("mp3/tone.mp3").getMusic();
+    private byte[] soundBarNotFound = new Tone("mp3/bar_not_found.mp3").getMusic();
+    private byte[] soundLineNotFound = new Tone("mp3/line_not_found.mp3").getMusic();
+
+    public static boolean isOralable = true;
 
     public class Properties {
         public static final String LH = "lh";
@@ -115,7 +122,7 @@ public class Fishing {
             Monitor monitor = new Monitor();
             monitor.start();
             this.close = false;
-        }else {
+        } else {
             System.out.println("monitor already start.");
         }
     }
@@ -175,7 +182,7 @@ public class Fishing {
                         switch (wParam.intValue()) {
                             case 519:
                                 start = !start;
-                                new SoundPlayer().start();
+                                new SoundPlayer(soundTone).start();
                                 break;
                             default:
                                 break;
@@ -213,6 +220,7 @@ public class Fishing {
                         if (!target.isEmpty()) {
                             fishing(target);
                         } else {
+                            new SoundPlayer(soundLineNotFound, isOralable).start();
                             System.out.println("can not find fishing line.");
                         }
                         System.out.println("--- step finish ---");
@@ -238,6 +246,7 @@ public class Fishing {
         ArrayList<Long> frames = new ArrayList<>();
         while (true) {
             if (!detectLoadingBar()) {
+                new SoundPlayer(soundBarNotFound, isOralable).start();
                 System.out.println("can not find loading bar.");
                 randomSleep(1, 99);
                 return;

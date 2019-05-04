@@ -8,6 +8,7 @@ import mouse.MouseHook;
 import mouse.MouseHookListener;
 import mouse.MouseHookStruct;
 import sound.SoundPlayer;
+import sound.Tone;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -47,6 +48,7 @@ public class Diablo3Crusader {
 
     private boolean defenseType = true;
     private volatile boolean start = false;
+    private byte[] soundTone = new Tone("mp3/tone.mp3").getMusic();
 
     private Robot robot;
 
@@ -135,13 +137,13 @@ public class Diablo3Crusader {
                         switch (wParam.intValue()) {
                             case 519:
                                 start = false;
-                                new SoundPlayer().start();
+                                new SoundPlayer(soundTone).start();
                                 System.out.println("action finish.");
                                 break;
                             case 523:
                                 //start = true;
                                 if (findD3HWND()) {
-                                    new SoundPlayer().start();
+                                    new SoundPlayer(soundTone).start();
                                     System.out.println("action start.");
                                 } else {
                                     System.out.println("open the game.");
