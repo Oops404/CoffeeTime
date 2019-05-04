@@ -6,7 +6,7 @@
 
     <groupId>personal.cheneykim</groupId>
     <artifactId>CoffeeTime</artifactId>
-    <version>0.3.beta</version>
+    <version>0.4.beta</version>
     <build>
         <plugins>
             <plugin>

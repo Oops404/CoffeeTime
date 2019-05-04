@@ -211,8 +211,12 @@ public class CoffeeTimeController implements Initializable {
     }
 
     public void guideButtonOnClicked() {
-        logList.getItems().add(0, "version: 0.3.beta");
-        logList.getItems().add(0, "羊羊羊(oﾟvﾟ)ノ");
+        logList.getItems().add(0, "[迭代版本 0.4Version] 羊羊羊(oﾟvﾟ)ノ省电教程:");
+        logList.getItems().add( "1. 魔兽世界画面设置,全部低，但保留水体细节（普通/优良），粒子密度（最高），轮廓线（高）。");
+        logList.getItems().add( "2. 魔兽世界画面高级设置,限制前台帧数（60），后台帧数（50）。");
+        logList.getItems().add( "3. 关闭电脑所有不必要的软件和后台程序（实在不能关闭的请最小化），只保留魔兽世界。");
+        logList.getItems().add( "4. 关闭电脑显示器，音箱，键盘鼠标...只需要保证网络稳定且主机工作即可。");
+
     }
 
     public void actionStart() {
