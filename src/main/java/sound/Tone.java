@@ -15,7 +15,7 @@ public class Tone {
 
     public Tone(String musicPath) {
         try (InputStream musicStream = this.getClass()
-                .getClassLoader().getResourceAsStream(musicPath)) { //"mp3/tone.mp3"
+                .getClassLoader().getResourceAsStream(musicPath)) {
             musicBytes = input2byte(musicStream);
         } catch (Exception e) {
             e.printStackTrace();

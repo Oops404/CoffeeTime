@@ -15,7 +15,7 @@ public class GameAction {
         this.robot = robot;
     }
 
-    public final void start(Event event) {
+    public final void start(AbstractEvent event) {
         //noinspection StatementWithEmptyBody
         if (event.inCD()) {
         } else {

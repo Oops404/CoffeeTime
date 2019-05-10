@@ -47,7 +47,8 @@ public class ImageViewer {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// 用户点击窗口关闭
+        // 用户点击窗口关闭
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -89,7 +90,8 @@ public class ImageViewer {
         }
         int bufferSize = matrix.channels() * matrix.cols() * matrix.rows();
         byte[] buffer = new byte[bufferSize];
-        matrix.get(0, 0, buffer); // 获取所有的像素点
+        // 获取所有的像素点
+        matrix.get(0, 0, buffer);
         BufferedImage image = new BufferedImage(matrix.cols(), matrix.rows(), type);
         final byte[] targetPixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
         System.arraycopy(buffer, 0, targetPixels, 0, buffer.length);

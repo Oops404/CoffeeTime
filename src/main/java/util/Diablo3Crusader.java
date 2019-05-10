@@ -4,8 +4,8 @@ import action.*;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinUser;
+import mouse.AbstractMouseHookListener;
 import mouse.MouseHook;
-import mouse.MouseHookListener;
 import mouse.MouseHookStruct;
 import sound.SoundPlayer;
 import sound.Tone;
@@ -17,6 +17,8 @@ import java.util.Random;
 import static java.lang.Thread.sleep;
 
 /**
+ *
+ * @author CheneyJin
  * RGB
  * int red = (pixel & 0xff0000) >> 16;
  * int green = (pixel & 0xff00) >> 8;
@@ -37,7 +39,7 @@ public class Diablo3Crusader {
 
     private ActionMouseL mouseL = new ActionMouseL(60);
     private ActionMouseR mouseR = new ActionMouseR(60);
-    private ActionMouseWD mouseWD = new ActionMouseWD(60);
+    private ActionMouseWheelDown mouseWD = new ActionMouseWheelDown(60);
     private ActionMouseWU mouseWU = new ActionMouseWU(60);
     private ActionCompelMove compelMove = new ActionCompelMove(60);
 
@@ -128,7 +130,7 @@ public class Diablo3Crusader {
         moveThread.start();
         MouseHook mouseHook = new MouseHook();
         try {
-            mouseHook.addMouseHookListener(new MouseHookListener() {
+            mouseHook.addMouseHookListener(new AbstractMouseHookListener() {
 
                 @Override
                 public WinDef.LRESULT callback(int nCode, WinDef.WPARAM wParam, MouseHookStruct lParam)
@@ -149,9 +151,9 @@ public class Diablo3Crusader {
                                     System.out.println("open the game.");
                                 }
                                 break;
-//                            default:
-//                                System.out.println(wParam.intValue());
-//                                break;
+                            default:
+                                System.out.println(wParam.intValue());
+                                break;
                         }
                     }
                     sleep(1);

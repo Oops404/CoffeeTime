@@ -5,9 +5,9 @@ import action.ActionMouseL;
 import action.GameAction;
 import com.sun.jna.platform.win32.WinDef;
 import javafx.scene.control.ListView;
+import mouse.AbstractMouseHookListener;
 import mouse.MouseCorrectRobot;
 import mouse.MouseHook;
-import mouse.MouseHookListener;
 import mouse.MouseHookStruct;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -23,16 +23,14 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
 
 public class Fishing {
 
-    private Scalar lower_red;
-    private Scalar upper_red;
+    private Scalar lowerRed;
+    private Scalar upperRed;
     private ActionButton1 button1 = new ActionButton1(300);
     private ActionMouseL mouseL = new ActionMouseL(60);
     private Random random = new Random(System.currentTimeMillis());
@@ -148,12 +146,12 @@ public class Fishing {
         pros.lh = configUtil.getValue(Properties.LH, 35);
         pros.ls = configUtil.getValue(Properties.LS, 110);
         pros.lv = configUtil.getValue(Properties.LV, 110);
-        lower_red = new Scalar(pros.lh, pros.ls, pros.lv);
+        lowerRed = new Scalar(pros.lh, pros.ls, pros.lv);
 
         pros.hh = configUtil.getValue(Properties.HH, 119);
         pros.hs = configUtil.getValue(Properties.HS, 255);
         pros.hv = configUtil.getValue(Properties.HV, 255);
-        upper_red = new Scalar(pros.hh, pros.hs, pros.hv);
+        upperRed = new Scalar(pros.hh, pros.hs, pros.hv);
 
         pros.maskDebug = configUtil.getValueBool(Properties.MASK_DEBUG, true);
         pros.catchDebug = configUtil.getValueBool(Properties.CATCH_DEBUG, true);
@@ -173,7 +171,7 @@ public class Fishing {
 
     private void mouseControl() {
         try {
-            mouseHook.addMouseHookListener(new MouseHookListener() {
+            mouseHook.addMouseHookListener(new AbstractMouseHookListener() {
 
                 @Override
                 public WinDef.LRESULT callback(int nCode, WinDef.WPARAM wParam, MouseHookStruct lParam)
@@ -330,7 +328,7 @@ public class Fishing {
         try (CTMat scape = new CTMat(bufferedImage2Mat(waterScape), "scape");
              CTMat mask = new CTMat(new Mat(), "mask")) {
             Imgproc.cvtColor(scape.getMat(), scape.getMat(), Imgproc.COLOR_RGB2HSV);
-            Core.inRange(scape.getMat(), lower_red, upper_red, mask.getMat());
+            Core.inRange(scape.getMat(), lowerRed, upperRed, mask.getMat());
             if (pros.maskDebug) {
                 Imgcodecs.imwrite(ConfigUtil.root() + "/mask.jpg", mask.getMat());
             }

@@ -9,12 +9,13 @@ import com.sun.jna.platform.win32.WinUser.HHOOK;
 import com.sun.jna.platform.win32.WinUser.MSG;
 
 /**
+ * @author CheneyJin
  * 鼠标钩子
  */
 public class MouseHook {
 
     private User32 lib;
-    private MouseHookListener mouseHook;
+    private AbstractMouseHookListener mouseHookListener;
     private HMODULE hMod;
     private boolean isWindows;
     private HHOOK hHook;
@@ -28,29 +29,28 @@ public class MouseHook {
 
     }
 
-    //添加钩子监听
-    public void addMouseHookListener(MouseHookListener mouseHook) {
-        this.mouseHook = mouseHook;
-        this.mouseHook.lib = lib;
+    public void addMouseHookListener(AbstractMouseHookListener mouseHookListener) {
+        this.mouseHookListener = mouseHookListener;
+        this.mouseHookListener.lib = lib;
     }
 
     public void startWindowsHookEx() {
         if (isWindows) {
-            hHook = lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHook, hMod, 0);
+            hHook = lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHookListener, hMod, 0);
         }
     }
 
     public void startWindowsHookExWithOutUI() {
         if (isWindows) {
-            lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHook, hMod, 0);
+            lib.SetWindowsHookEx(WinUser.WH_MOUSE_LL, mouseHookListener, hMod, 0);
             int result;
             MSG msg = new MSG();
             while ((result = lib.GetMessage(msg, null, 0, 0)) != 0) {
                 if (result == -1) {
-                    //System.err.println("error in get message");
+                    // System.err.println("error in get message");
                     break;
                 } else {
-                    //System.err.println("got message");
+                    // System.err.println("got message");
                     lib.TranslateMessage(msg);
                     lib.DispatchMessage(msg);
                 }

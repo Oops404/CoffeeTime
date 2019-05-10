@@ -14,15 +14,18 @@ public class SoundPlayer extends Thread {
     private boolean speak = true;
 
     public SoundPlayer(byte[] source, boolean speak) {
-        this.source = source;
+        setSource(source);
         this.speak = speak;
     }
 
     public SoundPlayer(byte[] source) {
-        this.source = source;
+        setSource(source);
     }
 
-    //重写run方法
+    private void setSource(byte[] source) {
+        this.source = (source == null ? new byte[]{0} : source.clone());
+    }
+
     @Override
     public void run() {
         super.run();

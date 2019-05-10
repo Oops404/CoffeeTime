@@ -29,7 +29,6 @@ public class CTMat implements AutoCloseable {
     @Override
     public void close() throws Exception {
         if (mat != null) {
-            //System.out.println(name + " released.");
             mat.release();
         }
     }

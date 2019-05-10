@@ -9,9 +9,9 @@ import static java.lang.Thread.sleep;
  * @Time 2018-09-29-15:11
  * @Email cheneyjin@outlook.com
  */
-public class ActionMouseWD extends Event {
+public class ActionMouseWheelDown extends AbstractEvent {
 
-    public ActionMouseWD(long cdTime) {
+    public ActionMouseWheelDown(long cdTime) {
         super(cdTime);
     }
 

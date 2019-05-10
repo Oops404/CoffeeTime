@@ -10,7 +10,7 @@ import static java.lang.Thread.sleep;
  * @Time 2018-09-29-16:04
  * @Email cheneyjin@outlook.com
  */
-public abstract class Event {
+public abstract class AbstractEvent {
 
     Random random = new Random(System.currentTimeMillis());
 
@@ -18,7 +18,7 @@ public abstract class Event {
 
     private CD cd = new CD();
 
-    public Event(long cdTime) {
+    public AbstractEvent(long cdTime) {
         this.cdTime = cdTime;
     }
 

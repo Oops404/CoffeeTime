@@ -11,7 +11,7 @@ import static java.lang.Thread.sleep;
  * @Time 2018-09-29-15:11
  * @Email cheneyjin@outlook.com
  */
-public class ActionMouseR extends Event {
+public class ActionMouseR extends AbstractEvent {
 
     public ActionMouseR(long cdTime) {
         super(cdTime);

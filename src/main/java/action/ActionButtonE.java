@@ -11,7 +11,7 @@ import static java.lang.Thread.sleep;
  * @Time 2018-09-29-15:11
  * @Email cheneyjin@outlook.com
  */
-public class ActionButtonE extends Event {
+public class ActionButtonE extends AbstractEvent {
 
     public ActionButtonE(long cdTime) {
         super(cdTime);

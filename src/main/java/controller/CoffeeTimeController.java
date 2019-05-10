@@ -3,7 +3,6 @@ package controller;
 import bean.ConfigItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -18,7 +17,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 import javafx.util.converter.IntegerStringConverter;
 import sound.SoundPlayer;
 import sound.Tone;
@@ -63,14 +61,14 @@ public class CoffeeTimeController implements Initializable {
     @FXML
     private ListView<String> logList;
 
-    private static Fishing fishing;
+    private Fishing fishing;
     private ObservableList<ConfigItem> propsList;
 
     private byte[] soundGuide = new Tone("mp3/guide.mp3").getMusic();
     private byte[] googleGirlShutup = new Tone("mp3/shut_up.mp3").getMusic();
     private byte[] googleGirlSpeak = new Tone("mp3/speak.mp3").getMusic();
 
-    public static void close() {
+    public void close() {
         fishing.close();
     }
 

@@ -7,8 +7,11 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
 
+/**
+ * @author CheneyJin
+ */
 public class MouseCorrectRobot extends Robot {
-    private final Dimension ScreenSize;// Primary Screen Size
+    private final Dimension ScreenSize;
 
     public MouseCorrectRobot() throws AWTException {
         super();
@@ -19,7 +22,7 @@ public class MouseCorrectRobot extends Robot {
         return Math.sqrt((double) ((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)));
     }
 
-    public void MoveMouseControlled(double xbe, double ybe) {
+    public void moveMouseControlled(double xbe, double ybe) {
         // Position of the cursor in [0,1] ranges. (0,0) is the upper left corner
         int xbepix = (int) (ScreenSize.width * xbe);
         int ybepix = (int) (ScreenSize.height * ybe);
@@ -28,33 +31,35 @@ public class MouseCorrectRobot extends Robot {
         int y = ybepix;
 
         Point mert = MouseInfo.getPointerInfo().getLocation();
-        Point ElozoInitPont = new Point(0, 0);
+        Point elozoInitPont = new Point(0, 0);
 
-        int UgyanAztMeri = 0;
-        final int UgyanAZtMeriLimit = 30;
+        int ugyanAztMeri = 0;
+        final int ugyanAZtMeriLimit = 30;
 
         int i = 0;
-        final int LepesLimit = 20000;
-        while ((mert.x != xbepix || mert.y != ybepix) && i < LepesLimit && UgyanAztMeri < UgyanAZtMeriLimit) {
+        final int lepesLimit = 20000;
+        while ((mert.x != xbepix || mert.y != ybepix) && i < lepesLimit && ugyanAztMeri < ugyanAZtMeriLimit) {
             ++i;
-            if (mert.x < xbepix)
+            if (mert.x < xbepix) {
                 ++x;
-            else
+            } else {
                 --x;
-            if (mert.y < ybepix)
+            }
+            if (mert.y < ybepix) {
                 ++y;
-            else
+            } else {
                 --y;
+            }
             mouseMove(x, y);
 
             mert = MouseInfo.getPointerInfo().getLocation();
 
-            if (getTav(ElozoInitPont, mert) < 5)
-                ++UgyanAztMeri;
-            else {
-                UgyanAztMeri = 0;
-                ElozoInitPont.x = mert.x;
-                ElozoInitPont.y = mert.y;
+            if (getTav(elozoInitPont, mert) < 5) {
+                ++ugyanAztMeri;
+            } else {
+                ugyanAztMeri = 0;
+                elozoInitPont.x = mert.x;
+                elozoInitPont.y = mert.y;
             }
 
         }

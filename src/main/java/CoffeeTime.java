@@ -8,9 +8,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
- * @Author CheneyJin
- * @Time 2019-04-17-11:59
- * @Email cheneyjin@outlook.com
+ * @author CheneyJin
+ * @time 2019-04-17-11:59
+ * @email cheneyjin@outlook.com
  */
 public class CoffeeTime extends Application {
     @Override
@@ -26,7 +26,6 @@ public class CoffeeTime extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             System.out.println("CoffeeTime closed.");
-            CoffeeTimeController.close();
             primaryStage.close();
             System.exit(0);
         });

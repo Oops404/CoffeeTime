@@ -9,6 +9,7 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinUser.POINT;
 
 /**
+ * @author CheneyJin
  * 定义鼠标钩子数据结构体
  */
 public class MouseHookStruct extends Structure {
