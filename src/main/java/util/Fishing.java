@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
@@ -259,14 +260,15 @@ public class Fishing {
 
     private boolean detectLoadingBar() {
         BufferedImage fishingLoadingBar = robot.createScreenCapture(new Rectangle(
-                pros.loadBarX, pros.loadBarY, 10, 10));
-
-//        BufferedImage fishingLoadingBar = JNAScreenShot.getScreenshot(new Rectangle(
-//                pros.loadBarX, pros.loadBarY, 10, 10));
+                pros.loadBarX, pros.loadBarY, 64, 64));
         try (CTMat loadingBar = new CTMat(bufferedImage2Mat(fishingLoadingBar), "loadingBar")) {
             double[] pixel = loadingBar.getMat().get(0, 0);
             if (pros.loadBarDebug) {
-                Imgcodecs.imwrite(ConfigUtil.root() + "/loadBar.jpg", loadingBar.getMat());
+                Imgcodecs.imwrite(
+                        ConfigUtil.root()
+                                + String.format("/loadBar%s.jpg", String.valueOf(System.currentTimeMillis())),
+                        loadingBar.getMat())
+                ;
             }
             return pixel.length != 0 && (pixel[1] - (pixel[0] + pixel[2]) > 110);
         } catch (Exception e) {
@@ -280,22 +282,23 @@ public class Fishing {
         BufferedImage targetScape = robot.createScreenCapture(
                 new Rectangle(screenCutX + target.x + pros.targetAlignX, screenCutY + target.y + pros.targetAlignY,
                         pros.targetSize, pros.targetSize));
-
-//        BufferedImage targetScape = JNAScreenShot.getScreenshot(
-//                new Rectangle(screenCutX + target.x + pros.targetAlignX, screenCutY + target.y + pros.targetAlignY,
-//                        pros.targetSize, pros.targetSize));
         try (CTMat sprayArea = new CTMat(bufferedImage2Mat(targetScape), "sprayArea");
-             CTMat graySprayArea = new CTMat(new Mat(), "graySprayArea")) {
+             CTMat graySprayArea = new CTMat(new Mat(), "graySprayArea");
+             CTMat otsuMat = new CTMat(new Mat(), "OTSU_graySprayArea")) {
             if (pros.sprayAreaDebug) {
                 Imgcodecs.imwrite(ConfigUtil.root() + "/sprayArea.jpg", sprayArea.getMat());
             }
             Imgproc.cvtColor(sprayArea.getMat(), graySprayArea.getMat(), Imgproc.COLOR_BGR2GRAY);
-            int width = graySprayArea.getMat().cols();
-            int height = graySprayArea.getMat().rows();
+            // 新增
+            Imgproc.threshold(graySprayArea.getMat(), otsuMat.getMat(), 0, 255, Imgproc.THRESH_OTSU);
+
+            // graySprayArea 替换为otsuMat
+            int width = otsuMat.getMat().cols();
+            int height = otsuMat.getMat().rows();
             long sum = 0;
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
-                    sum += graySprayArea.getMat().get(y, x)[0];
+                    sum += otsuMat.getMat().get(y, x)[0];
                 }
             }
             frames.add(sum);
@@ -307,7 +310,7 @@ public class Fishing {
                     && frames.get(framesSize - 4) > frames.get(framesSize - 5) + pros.sprayStep
             ) {
                 if (pros.catchDebug) {
-                    Imgcodecs.imwrite(ConfigUtil.root() + "/catch.jpg", sprayArea.getMat());
+                    Imgcodecs.imwrite(ConfigUtil.root() + "/catch.jpg", otsuMat.getMat());
                 }
                 return true;
             }
@@ -322,9 +325,6 @@ public class Fishing {
         BufferedImage waterScape = robot.createScreenCapture(
                 new Rectangle(screenCutX, screenCutY, (int) (screenWidth * 0.35), (int) (screenHeight * 0.35))
         );
-////
-//        BufferedImage waterScape = JNAScreenShot.getScreenshot(
-//                new Rectangle(screenCutX, screenCutY, (int) (screenWidth * 0.35), (int) (screenHeight * 0.35)));
         try (CTMat scape = new CTMat(bufferedImage2Mat(waterScape), "scape");
              CTMat mask = new CTMat(new Mat(), "mask")) {
             Imgproc.cvtColor(scape.getMat(), scape.getMat(), Imgproc.COLOR_RGB2HSV);

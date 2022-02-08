@@ -47,10 +47,10 @@ public class MouseHook {
             MSG msg = new MSG();
             while ((result = lib.GetMessage(msg, null, 0, 0)) != 0) {
                 if (result == -1) {
-                    // System.err.println("error in get message");
+                    // TODO System.err.println("error in get message");
                     break;
                 } else {
-                    // System.err.println("got message");
+                    // TODO System.err.println("got message");
                     lib.TranslateMessage(msg);
                     lib.DispatchMessage(msg);
                 }

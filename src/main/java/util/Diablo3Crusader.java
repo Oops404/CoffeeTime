@@ -40,7 +40,7 @@ public class Diablo3Crusader {
     private ActionMouseL mouseL = new ActionMouseL(60);
     private ActionMouseR mouseR = new ActionMouseR(60);
     private ActionMouseWheelDown mouseWD = new ActionMouseWheelDown(60);
-    private ActionMouseWU mouseWU = new ActionMouseWU(60);
+    private ActionMouseWheelUp mouseWU = new ActionMouseWheelUp(60);
     private ActionCompelMove compelMove = new ActionCompelMove(60);
 
     private Random random = new Random(System.currentTimeMillis());
